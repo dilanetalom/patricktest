@@ -1,6 +1,7 @@
 // src/components/Header.js
 import React, { useState } from 'react';
 import logo from "../images/patrick.jpeg"
+import { Link } from 'react-router-dom';
 
 // Assurez-vous que cette prop est passée depuis Layout.js
 // activeSection sera la chaîne de caractères (ex: 'home', 'project', 'skills', 'contact')
@@ -30,21 +31,21 @@ function NavbarHeader({ activeSection, setActiveSection }) {
 
 
   return (
-    <header className="flex justify-between items-center py-4 h-[12vh] text-gray-400 px-4 lg:px-[110px] relative z-50 bg-blue-950">
+    <header className="flex justify-between items-center  h-[12vh] w-full  text-gray-400 px-4 lg:px-[110px] fixed z-50 bg-white">
       {/* Logo avec l'effet abstrait (comme dans votre code) */}
       {/* <div className="text-3xl font-bold tracking-wider relative"> */}
-        <span className="font-charismatic text-white w-[60px] h-full relative">
+        <span className="font-charismatic text-white w-[100px] h-full relative">
           <img src={logo} alt="" className='w-full h-full' />
         </span>
  
 
       {/* Liens de navigation pour desktop */}
       <nav className="hidden md:flex space-x-8 text-lg font-medium">
-        <button onClick={() => handleNavLinkClick('home')} className={getNavLinkClasses('home')}>HOME</button>
-        <button onClick={() => handleNavLinkClick('skills')} className={getNavLinkClasses('skills')}>ABOUT</button>
-        <button onClick={() => handleNavLinkClick('skills')} className={getNavLinkClasses('skills')}>SERVICES</button>
-        <button onClick={() => handleNavLinkClick('project')} className={getNavLinkClasses('project')}>PORTFOLIO</button>
-        <button onClick={() => handleNavLinkClick('contact')} className={getNavLinkClasses('contact')}>CONTACT</button>
+      <Link className='relative text-blue-950 hover:text-white transition duration-300 focus:outline-none py-2 px-2' to="/" >Accueil</Link>
+        <Link className='relative text-blue-950 hover:text-white transition duration-300 focus:outline-none py-2 px-2' >A propos</Link>
+        <Link className='relative text-blue-950 hover:text-white transition duration-300 focus:outline-none py-2 px-2' >Services</Link>
+        <Link className='relative text-blue-950 hover:text-white transition duration-300 focus:outline-none py-2 px-2' >FAQ</Link>
+        <Link className='relative text-blue-950 hover:text-white transition duration-300 focus:outline-none py-2 px-2' to="/contact">Contact</Link>
         {/* Si vous avez une section 'members', ajoutez-la ici */}
         {/* <button onClick={() => handleNavLinkClick('members')} className={getNavLinkClasses('members')}>Members</button> */}
       </nav>
@@ -58,7 +59,7 @@ function NavbarHeader({ activeSection, setActiveSection }) {
 
       {/* Bouton Burger pour mobile */}
       <div className="md:hidden">
-        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-100 focus:outline-none p-2 rounded-md hover:bg-gray-800 transition duration-200">
+        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-blue-950 focus:outline-none p-2 rounded-md hover:bg-blue-950 hover:text-white transition duration-200">
           {isMenuOpen ? (
             <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -83,12 +84,12 @@ function NavbarHeader({ activeSection, setActiveSection }) {
           </svg>
         </button>
 
-        <nav className="flex flex-col items-center space-y-6 text-2xl font-medium">
-        <button onClick={() => handleNavLinkClick('home')} className={getNavLinkClasses('home')}>HOME</button>
-        <button onClick={() => handleNavLinkClick('skills')} className={getNavLinkClasses('skills')}>ABOUT</button>
-        <button onClick={() => handleNavLinkClick('skills')} className={getNavLinkClasses('skills')}>SERVICES</button>
-        <button onClick={() => handleNavLinkClick('project')} className={getNavLinkClasses('project')}>PORTFOLIO</button>
-        <button onClick={() => handleNavLinkClick('contact')} className={getNavLinkClasses('contact')}>CONTACT</button>
+        <nav className="flex flex-col text-lg items-center space-y-6  font-medium">
+        <Link className='relative text-gray-300 hover:text-white transition duration-300 focus:outline-none py-2 px-2' to="/" >Accueil</Link>
+        <Link className='relative text-gray-300 hover:text-white transition duration-300 focus:outline-none py-2 px-2' >A propos</Link>
+        <Link className='relative text-gray-300 hover:text-white transition duration-300 focus:outline-none py-2 px-2' >Services</Link>
+        <Link className='relative text-gray-300 hover:text-white transition duration-300 focus:outline-none py-2 px-2' >FAQ</Link>
+        <Link className='relative text-gray-300 hover:text-white transition duration-300 focus:outline-none py-2 px-2' to="/contact">Contact</Link>
           {/* <button onClick={() => handleNavLinkClick('members')} className={getMobileNavLinkClasses('members')}>Members</button> */}
         </nav>
 

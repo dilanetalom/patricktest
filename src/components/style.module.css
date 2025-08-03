@@ -1,0 +1,10 @@
+.background {
+  background: url(../images/contact_hero.jpeg);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.details {
+  background-image: url(../images/hero.svg);
+  background-position: bottom;
+}

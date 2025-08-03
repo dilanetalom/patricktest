@@ -6,7 +6,7 @@ function Footer() {
   };
 
   return (
-    <footer className="bg-gray-900 text-gray-400 py-12 px-4 lg:px-[110px] relative">
+    <footer className="bg-blue-950 text-gray-400 py-12 px-4 lg:px-[110px] relative">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {/* Section LIENS UTILES */}
         <div>
