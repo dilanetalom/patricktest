@@ -2,12 +2,13 @@
   "name": "mboabus-admin",
   "version": "0.0.1",
 "engines": {
-  "node": ">=18.0.0" 
+  "node": "22.16.0" 
 },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "chmod +x ./node_modules/.bin/vite || true"
   },
   "dependencies": {
     "lucide-react": "^0.525.0",
