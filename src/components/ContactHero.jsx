@@ -6,7 +6,7 @@ import { FaCalendarAlt } from "react-icons/fa";
 function ContactHero() {
   return (
     <div
-      className={`${style.background} h-[60vh] md:h-[70vh] pt-10 md:pt-0 flex items-center lg:px-[110px] px-4`}
+      className={`${style.background} h-[70vh] md:h-[70vh] pt-10 md:pt-0 flex items-center lg:px-[110px] px-4`}
     >
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2 text-white font-bold text-2xl md:text-5xl">
