@@ -19,11 +19,11 @@ function ContactDetails() {
     },
     {
       id: 1,
-      title: "Numéro de téléphones",
+      title: "Numéro de téléphone",
       icon: <BiSolidPhoneCall size={54} />,
       content: [
         {
-          value: "+33 6 68 89 86 92",
+          value: "+33 6 38 05 54 46",
           mail: false,
         },
    
@@ -35,7 +35,7 @@ function ContactDetails() {
       icon: <BiSolidEnvelope size={54} />,
       content: [
         {
-          value: "support@patrick.com",
+          value: "info@mpedigitalsolutions.com",
           mail: true,
         },
       ],
