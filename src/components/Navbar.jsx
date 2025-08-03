@@ -1,5 +1,6 @@
 // src/components/Header.js
 import React, { useState } from 'react';
+import logo from "../images/patrick.jpeg"
 
 // Assurez-vous que cette prop est passée depuis Layout.js
 // activeSection sera la chaîne de caractères (ex: 'home', 'project', 'skills', 'contact')
@@ -29,32 +30,31 @@ function NavbarHeader({ activeSection, setActiveSection }) {
 
 
   return (
-    <header className="flex justify-between items-center py-4 h-[10vh] text-gray-400 lg:px-[110px] px-5 relative z-50 bg-gray-950">
+    <header className="flex justify-between items-center py-4 h-[12vh] text-gray-400 px-4 lg:px-[110px] relative z-50 bg-blue-950">
       {/* Logo avec l'effet abstrait (comme dans votre code) */}
-      <div className="text-3xl font-bold tracking-wider relative">
-        {/* L'effet de dégradé était sur le div externe dans votre snippet.
-            Si vous voulez qu'il soit sur le texte, il faut le gérer différemment (clip-text).
-            Pour l'instant, je le retire car il s'agit d'un effet visuel sur le fond de la hero.
-            Si vous voulez un effet similaire sur le texte du logo, il faudra utiliser 'bg-clip-text' et 'text-transparent' ici. */}
-        <span className="font-charismatic text-white">Talom Dilane</span>
-      </div>
+      {/* <div className="text-3xl font-bold tracking-wider relative"> */}
+        <span className="font-charismatic text-white w-[60px] h-full relative">
+          <img src={logo} alt="" className='w-full h-full' />
+        </span>
+ 
 
       {/* Liens de navigation pour desktop */}
       <nav className="hidden md:flex space-x-8 text-lg font-medium">
-        <button onClick={() => handleNavLinkClick('home')} className={getNavLinkClasses('home')}>Home</button>
-        <button onClick={() => handleNavLinkClick('project')} className={getNavLinkClasses('project')}>Portfolio</button>
-        <button onClick={() => handleNavLinkClick('skills')} className={getNavLinkClasses('skills')}>Compétences</button>
-        <button onClick={() => handleNavLinkClick('contact')} className={getNavLinkClasses('contact')}>Contact</button>
+        <button onClick={() => handleNavLinkClick('home')} className={getNavLinkClasses('home')}>HOME</button>
+        <button onClick={() => handleNavLinkClick('skills')} className={getNavLinkClasses('skills')}>ABOUT</button>
+        <button onClick={() => handleNavLinkClick('skills')} className={getNavLinkClasses('skills')}>SERVICES</button>
+        <button onClick={() => handleNavLinkClick('project')} className={getNavLinkClasses('project')}>PORTFOLIO</button>
+        <button onClick={() => handleNavLinkClick('contact')} className={getNavLinkClasses('contact')}>CONTACT</button>
         {/* Si vous avez une section 'members', ajoutez-la ici */}
         {/* <button onClick={() => handleNavLinkClick('members')} className={getNavLinkClasses('members')}>Members</button> */}
       </nav>
 
       {/* Bouton CV pour desktop */}
-      <div className="hidden md:block">
+      {/* <div className="hidden md:block">
         <button className="p-2 font-bold border-2 border-gray-600 rounded-full text-gray-300 hover:bg-gray-700 hover:text-white transition duration-300 hover:border-purple-500">
-          CV
+          Contact
         </button>
-      </div>
+      </div> */}
 
       {/* Bouton Burger pour mobile */}
       <div className="md:hidden">
@@ -73,7 +73,7 @@ function NavbarHeader({ activeSection, setActiveSection }) {
 
       {/* Menu Mobile (Overlay) */}
       <div
-        className={`fixed inset-0 bg-gray-950 bg-opacity-95 z-40 flex flex-col items-center justify-center space-y-8 transform transition-transform duration-500 ease-in-out ${
+        className={`fixed inset-0 bg-blue-950 bg-opacity-95 z-40 flex flex-col items-center justify-center space-y-8 transform transition-transform duration-500 ease-in-out ${
           isMenuOpen ? 'translate-x-0' : 'translate-x-full'
         } md:hidden`}
       >
@@ -84,19 +84,20 @@ function NavbarHeader({ activeSection, setActiveSection }) {
         </button>
 
         <nav className="flex flex-col items-center space-y-6 text-2xl font-medium">
-          <button onClick={() => handleNavLinkClick('home')} className={getMobileNavLinkClasses('home')}>Home</button>
-          <button onClick={() => handleNavLinkClick('project')} className={getMobileNavLinkClasses('project')}>Portfolio</button>
-          <button onClick={() => handleNavLinkClick('skills')} className={getMobileNavLinkClasses('skills')}>Compétences</button>
-          <button onClick={() => handleNavLinkClick('contact')} className={getMobileNavLinkClasses('contact')}>Contact</button>
+        <button onClick={() => handleNavLinkClick('home')} className={getNavLinkClasses('home')}>HOME</button>
+        <button onClick={() => handleNavLinkClick('skills')} className={getNavLinkClasses('skills')}>ABOUT</button>
+        <button onClick={() => handleNavLinkClick('skills')} className={getNavLinkClasses('skills')}>SERVICES</button>
+        <button onClick={() => handleNavLinkClick('project')} className={getNavLinkClasses('project')}>PORTFOLIO</button>
+        <button onClick={() => handleNavLinkClick('contact')} className={getNavLinkClasses('contact')}>CONTACT</button>
           {/* <button onClick={() => handleNavLinkClick('members')} className={getMobileNavLinkClasses('members')}>Members</button> */}
         </nav>
 
         {/* Bouton CV dans le menu mobile (optionnel) */}
-        <div className="mt-8">
+        {/* <div className="mt-8">
           <button className="p-3 border-2 border-gray-600 rounded-full text-gray-300 hover:bg-gray-700 hover:text-white transition duration-300 hover:border-purple-500">
             CV
           </button>
-        </div>
+        </div> */}
       </div>
     </header>
   );
