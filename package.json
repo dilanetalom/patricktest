@@ -9,6 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "postinstall": "chmod +x ./node_modules/.bin/vite || true"
+    
   },
   "dependencies": {
     "lucide-react": "^0.525.0",
