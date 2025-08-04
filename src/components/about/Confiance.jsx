@@ -1,5 +1,5 @@
 import React from "react";
-// import about2 from "../assets/about2.jpeg";
+import about2 from "../../images/about2.jpeg";
 import { FaAngleRight } from "react-icons/fa";
 
 function Confiance() {
@@ -28,11 +28,11 @@ function Confiance() {
         <div className="md:w-[50%] mt-16 md:mt-0 md:h-full h-80 relative">
           <div className="w-full h-full bg-[#c22d0b] transform translate-x-5 translate-y-5 absolute"></div>
           <div className="w-full h-full absolute ">
-            {/* <img
+            <img
               src={about2}
               className="h-full w-full object-cover object-center"
               alt=""
-            /> */}
+            />
           </div>
         </div>
       </div>
