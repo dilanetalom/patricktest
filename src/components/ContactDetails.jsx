@@ -12,7 +12,7 @@ function ContactDetails() {
       icon: <HiMapPin size={54} />,
       content: [
         {
-          value: "Yaounde, Cameroun",
+          value: "Cameroun, France  et Turquie ",
           mail: false,
         },
       ],
