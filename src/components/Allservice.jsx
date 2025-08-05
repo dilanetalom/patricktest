@@ -96,11 +96,11 @@ function Allservice() {
       <div className="w-full py-5 flex justify-center items-center text-blue-950 text-4xl font-[500]">
         Autres services
       </div>
-      <div className=" w-full grid grid-cols-4 gap-3 justify-center items-center">
+      <div className=" w-full grid grid-cols-4 gap-3 justify-center items-center ">
         {list.map((item) => {
           return (
             <div
-              className="w-[360px] h-[320px] border border-gray-300 rounded-lg card p-6"
+              className="w-[360px] h-[320px] border border-gray-300 rounded-lg  p-6"
               key={item.id}
             >
               <div className="w-full h-1/4"></div>

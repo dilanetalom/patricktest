@@ -69,9 +69,13 @@ function NavbarHeader({ activeSection, setActiveSection }) {
   ];
 
   // Liste des langues avec drapeaux
+  // <div className="flex space-x-2">
+  //   <img src="https://flagcdn.com/w20/gb.png" alt="EN" className="w-5 h-auto cursor-pointer hover:opacity-80" />
+  //   <img src="https://flagcdn.com/w20/fr.png" alt="FR" className="w-5 h-auto cursor-pointer hover:opacity-80" />
+  // </div>
   const languages = [
-    { name: "Français", code: "fr", flag: '🇫🇷' },
-    { name: "English", code: "en", flag: '🇬🇧' },
+    { name: "Français", code: "https://flagcdn.com/w20/fr.png", flag: "https://flagcdn.com/w20/fr.png" },
+    { name: "English", code: "https://flagcdn.com/w20/gb.png", flag: "https://flagcdn.com/w20/gb.png" },
   ];
 
   return (
@@ -82,7 +86,7 @@ function NavbarHeader({ activeSection, setActiveSection }) {
       </span>
 
       {/* Liens de navigation pour bureau */}
-      <nav className="hidden md:flex flex-grow justify-center items-center gap-3 text-lg font-medium">
+      <nav className="hidden md:flex flex-grow justify-center items-center gap-3 text-medium font-medium">
         <Link className={getNavLinkClasses('home')} to="/" onClick={() => handleNavLinkClick('home')}>Accueil</Link>
         <Link className={getNavLinkClasses('about')} to="/about" onClick={() => handleNavLinkClick('about')}>A propos</Link>
 
@@ -120,13 +124,17 @@ function NavbarHeader({ activeSection, setActiveSection }) {
         </div>
 
         <Link className={getNavLinkClasses('realisations')} to="/realisations" onClick={() => handleNavLinkClick('realisations')}>Nos Réalisations</Link>
+        <Link className={getNavLinkClasses('contact')} to="/contact" onClick={() => handleNavLinkClick('realisations')}>Contact</Link>
         <Link className={getNavLinkClasses('faq')} to="/faq" onClick={() => handleNavLinkClick('faq')}>FAQ</Link>
         <Link className={getNavLinkClasses('shop')} to="/shop" onClick={() => handleNavLinkClick('shop')}>Boutique</Link>
       </nav>
 
       <div className="hidden md:flex items-center space-x-4">
         <Link className="px-6 py-3 font-bold bg-[#c22d0b] text-white rounded-2xl hover:bg-blue-950 transition duration-300" to="/contact" onClick={() => handleNavLinkClick('contact')}>
-          Contact
+          Connexion
+        </Link>
+        <Link className="px-6 py-3 font-bold bg-blue-950 text-white rounded-2xl hover:bg-blue-950 transition duration-300" to="/contact" onClick={() => handleNavLinkClick('contact')}>
+          Inscription
         </Link>
 
         <div className="relative" ref={languageDropdownRef}>
@@ -134,7 +142,9 @@ function NavbarHeader({ activeSection, setActiveSection }) {
             className="relative text-blue-950 hover:text-blue-800 transition duration-300 focus:outline-none py-2 px-2 flex items-center"
             onClick={() => setIsLanguageDropdownOpen((prevState) => !prevState)}
           >
-            {currentLanguage.flag} {/* Emoji du drapeau */}
+            <img src={currentLanguage.flag} alt="EN" className="w-5 h-auto cursor-pointer hover:opacity-80" />
+
+
             <svg className={`ml-1 w-4 h-4 transition-transform duration-200 ${isLanguageDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
             </svg>
@@ -150,7 +160,8 @@ function NavbarHeader({ activeSection, setActiveSection }) {
                     setIsLanguageDropdownOpen(false);
                   }}
                 >
-                  {lang.flag} {/* Emoji du drapeau */}
+                  <img src={lang.code} alt="EN" className="w-5 h-auto cursor-pointer hover:opacity-80" />
+
                 </button>
               ))}
             </div>
@@ -219,14 +230,18 @@ function NavbarHeader({ activeSection, setActiveSection }) {
           </div>
 
           <Link className={getMobileNavLinkClasses('realisations')} to="/realisations" onClick={() => handleNavLinkClick('realisations')}>Nos Réalisations</Link>
+          <Link className={getMobileNavLinkClasses('contact')} to="/contact" onClick={() => handleNavLinkClick('contact')}>Conntact</Link>
           <Link className={getMobileNavLinkClasses('faq')} to="/faq" onClick={() => handleNavLinkClick('faq')}>FAQ</Link>
           <Link className={getMobileNavLinkClasses('shop')} to="/shop" onClick={() => handleNavLinkClick('shop')}>Boutique</Link>
 
           <div className="w-full h-px bg-gray-700 my-4"></div> {/* Séparateur */}
 
-          <Link className="px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-600 transition duration-300 w-fit" to="/contact" onClick={() => handleNavLinkClick('contact')}>
-            Contact
-          </Link>
+          <Link className="px-6 py-3 font-bold bg-[#c22d0b] text-white rounded-2xl hover:bg-blue-950 transition duration-300" to="/contact" onClick={() => handleNavLinkClick('contact')}>
+          Connexion
+        </Link>
+        <Link className="px-6 py-3 font-bold bg-blue-950 text-white rounded-2xl hover:bg-blue-950 transition duration-300" to="/contact" onClick={() => handleNavLinkClick('contact')}>
+          Inscription
+        </Link>
 
           {/* Menu déroulant Langue pour mobile */}
           <div className="w-full text-center" ref={mobileLanguageRef}>
