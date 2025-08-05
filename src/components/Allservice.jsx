@@ -92,29 +92,29 @@ function Allservice() {
 
   const navigate = useNavigate()
   return (
-    <div className="lg:px-[110px] px-4 pt-40 pb-10 w-full bg-white flex flex-col gap-5 ">
-      <div className="w-full py-5 flex justify-center items-center text-blue-950 text-4xl font-[500]">
+    <div className="lg:px-[110px] px-4  pb-10 w-full bg-white flex flex-col gap-5 ">
+      <div className="w-full py-5 flex justify-center items-center text-blue-950 md:text-[2.5em] text-[2em] font-[700]">
         Autres services
       </div>
-      <div className=" w-full grid grid-cols-4 gap-3 justify-center items-center ">
+      <div className=" w-full grid lg:grid-cols-4 md:grid-cols-2 gap-3 justify-center items-center ">
         {list.map((item) => {
           return (
             <div
-              className="w-[360px] h-[320px] border border-gray-300 rounded-lg  p-6"
+              className=" h-[250px] border border-gray-300 rounded-lg   hover:text-white cursor-pointer p-6"
               key={item.id}
             >
-              <div className="w-full h-1/4"></div>
-              <div className="w-full h-2/4 flex flex-col gap-3">
-                <div className="text-[#00A1D8] font-[500] text-[1.4em] text-center card_text">
+              {/* <div className="w-full h-1/4"></div> */}
+              <div className="w-full h-3/4 flex flex-col gap-8">
+                <div className="text-blue-950 font-[500] text-[1.4em] text-center card_text">
                   {item.title}
                 </div>
-                <div className="text-center text-gray-300 font-[300] card_text">
+                <div className="text-center text-[13px] text-blue-950 font-[300] card_text">
                   {" "}
                   {item.description}
                 </div>
               </div>
               <div className="w-full h-1/4 flex items-center justify-center">
-                <Link to="/express" className="text-[#00A1D8] font-[500] card_text" >
+                <Link to="/express" className="text-[#c22d0b] font-[500] card_text" >
                   En Savoir plus
                 </Link>
               </div>

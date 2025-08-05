@@ -96,7 +96,7 @@ const HeaderSlider = () => {
               className="absolute inset-0 bg-cover bg-center bg-no-repeat"
               style={{ backgroundImage: `url(${slide.image})` }}
             >
-              <div className="absolute inset-0 bg-black/60"></div>
+              <div className="absolute inset-0 bg-blue-950/60"></div>
             </div>
 
             {/* Content */}
@@ -104,7 +104,7 @@ const HeaderSlider = () => {
               <div className="text-center text-white px-4 max-w-4xl mx-auto">
                 {/* Brand Logo */}
                 <div className={`mb-8 ${index === currentSlide ? getAnimationClass(slide.animation) : 'opacity-0'}`}>
-                  <h1 className="text-6xl md:text-5xl font-bold tracking-wider mb-4">
+                  <h1 className="text-4xl md:text-5xl font-bold tracking-wider mb-4">
                   TRANSFORMEZ VOTRE AVENIR DIGITAL
                   </h1>
                 </div>
