@@ -6,7 +6,7 @@ import { PrimaryButton } from "../Buttons";
 
 function AboutFirst() {
   return (
-    <div className="lg:px-[110px] px-4 w-full md:h-[700px] pt-36 pb-10 flex md:flex-row flex-col bg-white gap-10 md:gap-0">
+    <div className="container w-full md:h-[700px] pt-36 pb-10 flex md:flex-row flex-col bg-white gap-10 md:gap-0">
       <div className="md:w-1/2 h-full relative">
         <div className="w-full h-full absolute"></div>
         <div className={`w-full h-full ${style.about}`}>

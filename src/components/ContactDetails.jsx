@@ -43,7 +43,7 @@ function ContactDetails() {
   ];
   return (
     <div
-      className={`container-fluid py-20 bg-blue-950 lg:px-[110px] px-4 ${style.details} relative`}
+      className={`py-20 bg-blue-950 lg:px-[180px] px-4 ${style.details} relative`}
     >
       <div className="w-full flex gap-4 flex-wrap justify-center md:justify-between items-center">
         {infos &&

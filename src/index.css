@@ -5,6 +5,33 @@
 
 
 
+.container{
+  width: var(--container-width-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .container{
+    width: var(--container-width-sm);
+  }
+}
+
+/* Pour les écrans moyens */
+@media (min-width: 601px) and (max-width: 900px) {
+  .container{
+    width: var(--container-width-md);
+  }
+}
+
+/* Pour les écrans plus larges */
+@media (min-width: 901px) {
+  .container{
+    width: var(--container-width-md);
+  }
+}
+
+
 /* Keyframes pour les animations de slide */
 @keyframes slideInUp {
     from {

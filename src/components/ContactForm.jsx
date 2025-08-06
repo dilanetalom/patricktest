@@ -17,7 +17,7 @@ function ContactForm() {
   };
 
   return (
-    <div className="lg:px-[110px] px-4 py-20 bg-white">
+    <div className="container py-20 bg-white">
       <div className="w-full flex flex-col-reverse md:flex-row gap-8">
         <div className="w-full md:w-1/2">
           <iframe

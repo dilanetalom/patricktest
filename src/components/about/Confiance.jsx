@@ -4,7 +4,7 @@ import { FaAngleRight } from "react-icons/fa";
 
 function Confiance() {
   return (
-    <div className="pb-28 bg-white  lg:px-[110px] px-4 lg:mt-20">
+    <div className="pb-28 bg-white  container lg:mt-20">
       <div className="w-full lg:h-96 md:h-[500px] h-screen md:gap-0 gap-14 flex md:flex-row flex-col items-center  ">
         <div className="md:w-1/2 h-80 md:pr-20 flex  items-center  ">
           <div className="h-3/4 w-full flex flex-col gap-5">

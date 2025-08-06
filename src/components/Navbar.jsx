@@ -79,7 +79,7 @@ function NavbarHeader({ activeSection, setActiveSection }) {
   ];
 
   return (
-    <header className="flex justify-between items-center h-[12vh] w-full text-gray-400 px-4 lg:px-[110px] fixed z-50 bg-white shadow-md">
+    <header className="flex justify-between items-center h-[12vh] w-full text-gray-400 px-4 lg:px-[180px] fixed z-50 bg-white shadow-md">
       {/* Logo */}
       <span className="font-charismatic text-white w-[100px] h-full relative">
         <img src={logo} alt="Logo" className='w-full h-full object-contain' />

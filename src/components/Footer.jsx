@@ -6,7 +6,8 @@ function Footer() {
   };
 
   return (
-    <footer className="bg-blue-950 text-gray-400 py-12 px-4 lg:px-[110px] relative">
+    <footer className="bg-blue-950 text-gray-400 py-12 relative">
+      <div className='container'>
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {/* Section LIENS UTILES */}
         <div>
@@ -110,6 +111,7 @@ function Footer() {
           </svg>
           <span className="sr-only">Envoyez-nous un message</span>
         </a>
+      </div>
       </div>
     </footer>
   );

@@ -42,7 +42,7 @@ function Howitworks() {
          
         </div>
       </div>
-      <div className="lg:px-[110px] px-4 lg:h-60 bg-white">
+      <div className="container lg:h-60 bg-white">
         <div className="w-full h-full bg-white shadow-xl rounded-lg transform lg:-translate-y-20 -translate-y-5 grid lg:grid-cols-3 md:grid-cols-2  grid-cols-2 md:gap-10 items-center md:p-10 py-5 lg:py-0">
           {list.map((item) => {
             return (

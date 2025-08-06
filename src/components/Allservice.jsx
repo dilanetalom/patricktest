@@ -92,7 +92,7 @@ function Allservice() {
 
   const navigate = useNavigate()
   return (
-    <div className="lg:px-[110px] px-4  pb-10 w-full bg-white flex flex-col gap-5 ">
+    <div className="container  pb-10 w-full bg-white flex flex-col gap-5 ">
       <div className="w-full py-5 flex justify-center items-center text-blue-950 md:text-[2.5em] text-[2em] font-[700]">
         Autres services
       </div>
@@ -104,7 +104,7 @@ function Allservice() {
               key={item.id}
             >
               {/* <div className="w-full h-1/4"></div> */}
-              <div className="w-full h-3/4 flex flex-col gap-8">
+              <div className="w-full h-3/4 flex flex-col gap-4">
                 <div className="text-blue-950 font-[500] text-[1.4em] text-center card_text">
                   {item.title}
                 </div>

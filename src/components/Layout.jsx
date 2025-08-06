@@ -6,7 +6,7 @@ import {  Phone, Mail, Facebook, Instagram, Twitter, Linkedin } from 'lucide-rea
 
 function Layout({children}) {
   return (
-    <div>
+    <div className='w-ful'>
          {/* <div className="absolute top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/50 to-transparent">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center text-white text-sm">

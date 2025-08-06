@@ -6,6 +6,8 @@ import Howitworks from '../components/Howitworks'
 import TestimonialSection from '../components/TestimonialSection'
 import PartnersSection from '../components/PartenaireSection'
 import ContactForm from '../components/ContactForm'
+import Presentation from '../components/Presentaion'
+import Question from '../components/Faq'
 
 function Porfolio() {
   return (
@@ -13,8 +15,10 @@ function Porfolio() {
       <HeaderSlider/>
       <Howitworks/>
       <Allservice/>
+      {/* <Presentation/> */}
       <PartnersSection/>
       <TestimonialSection/>
+      <Question/>
       <ContactForm/>
     </Layout>
   )
