@@ -130,12 +130,12 @@ function NavbarHeader({ activeSection, setActiveSection }) {
       </nav>
 
       <div className="hidden md:flex items-center space-x-4">
-        <Link className="px-6 py-3 font-bold bg-[#c22d0b] text-white rounded-2xl hover:bg-blue-950 transition duration-300" to="/contact" onClick={() => handleNavLinkClick('contact')}>
+        <Link className="px-6 py-3 font-bold bg-[#c22d0b] text-white rounded-2xl hover:bg-blue-950 transition duration-300" to="/login" onClick={() => handleNavLinkClick('contact')}>
           Connexion
         </Link>
-        <Link className="px-6 py-3 font-bold bg-blue-950 text-white rounded-2xl hover:bg-blue-950 transition duration-300" to="/contact" onClick={() => handleNavLinkClick('contact')}>
+        {/* <Link className="px-6 py-3 font-bold bg-blue-950 text-white rounded-2xl hover:bg-blue-950 transition duration-300" to="/contact" onClick={() => handleNavLinkClick('contact')}>
           Inscription
-        </Link>
+        </Link> */}
 
         <div className="relative" ref={languageDropdownRef}>
           <button
@@ -236,12 +236,12 @@ function NavbarHeader({ activeSection, setActiveSection }) {
 
           <div className="w-full h-px bg-gray-700 my-4"></div> {/* Séparateur */}
 
-          <Link className="px-6 py-3 font-bold bg-[#c22d0b] text-white rounded-2xl hover:bg-blue-950 transition duration-300" to="/contact" onClick={() => handleNavLinkClick('contact')}>
+          <Link className="px-6 py-3 font-bold bg-[#c22d0b] text-white rounded-2xl hover:bg-blue-950 transition duration-300" to="/login" onClick={() => handleNavLinkClick('contact')}>
           Connexion
         </Link>
-        <Link className="px-6 py-3 font-bold bg-blue-950 text-white rounded-2xl hover:bg-blue-950 transition duration-300" to="/contact" onClick={() => handleNavLinkClick('contact')}>
+        {/* <Link className="px-6 py-3 font-bold bg-blue-950 text-white rounded-2xl hover:bg-blue-950 transition duration-300" to="/contact" onClick={() => handleNavLinkClick('contact')}>
           Inscription
-        </Link>
+        </Link> */}
 
           {/* Menu déroulant Langue pour mobile */}
           <div className="w-full text-center" ref={mobileLanguageRef}>
