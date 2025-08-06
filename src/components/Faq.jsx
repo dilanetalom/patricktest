@@ -55,10 +55,9 @@ function Question() {
                         className='w-full'
                     >
                         <p className="ml-2 text-justify py-3 lg:text-[16px] text-[13px]">
-                            ML CONCEPT Sarl est une entreprise spécialisée dans les travaux d’électricité générale,
-                            industrielle et publique. Forts d’une équipe expérimentée et rigoureuse, nous accompagnons
+                            MPE DIGITAL SOLUTION est une entreprise spécialisée . Forts d’une équipe expérimentée et rigoureuse, nous accompagnons
                             les particuliers, les entreprises et les collectivités dans la réalisation de leurs projets
-                            électriques en garantissant sécurité, efficacité et durabilité.                        </p>
+                            , efficacité et durabi                      </p>
                             
                     </AccordionTab>
 
@@ -74,17 +73,9 @@ function Question() {
                         }
                     >
                         <p className="ml-2 text-justify py-3 lg:text-[16px] text-[13px]">
-                            Nous proposons une gamme complète de services dans le domaine de l’électricité, notamment :
-
-                            L’électricité HTA-BT (Moyen et Basse Tension)
-                            L’installation électrique des bâtiments
-                            Fourniture de materiels électriques
-                            Les travaux d’électricité industrielle
-                            Prestation de service
-                            La maintenance et la fourniture de groupes électrogènes
-                            Les solutions d’énergie solaire
-                            L’éclairage public
-                            Nos interventions couvrent la conception, la réalisation, la maintenance et la mise aux normes.                        </p>
+                            
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae neque cum nisi commodi assumenda deserunt autem maiores, eius eum expedita debitis harum facere facilis ea architecto, nihil perferendis, ut consectetur!
+                                                 </p>
                     </AccordionTab>
 
                     <AccordionTab
@@ -99,9 +90,9 @@ function Question() {
                         }
                     >
                         <p className="ml-2 text-justify py-3 lg:text-[16px] text-[13px]">
-                            Nos tarifs varient en fonction de la nature du projet, de sa complexité et des besoins spécifiques de chaque client.
-                            Nous proposons des devis personnalisés,
-                            gratuits et sans engagement afin de garantir une transparence totale. Contactez-nous pour une évaluation adaptée à vos besoins.                        </p>
+                            
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo praesentium, asperiores quisquam totam eligendi alias adipisci doloremque ipsum consequatur quae! Minima recusandae voluptate dolore aperiam similique ipsum natus cumque omnis!
+                                                    </p>
                     </AccordionTab>
 
                     <AccordionTab
@@ -116,9 +107,11 @@ function Question() {
                         }
                     >
                         <p className="ml-2 text-justify py-3 lg:text-[16px] text-[13px]">
-                            Oui, nous mettons régulièrement en place des offres spéciales, notamment pour les nouveaux clients,
-                            les projets groupés ou les partenariats à long terme. Ces offres peuvent inclure des réductions,
-                            des services gratuits additionnels ou des facilités de paiement. N'hésitez pas à consulter notre équipe ou notre site pour les offres en cours.                        </p>
+                            
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aspernatur 
+                            qui debitis voluptas, molestiae dolorem officia earum odio nostrum, doloribus facilis culpa, 
+                            modi omnis nobis in eligendi repudiandae veritatis necessitatibus cum.
+                                                   </p>
                     </AccordionTab>
                     <AccordionTab
                         header={
@@ -132,12 +125,9 @@ function Question() {
                         }
                     >
                         <p className="ml-2 text-justify py-3 lg:text-[16px] text-[13px]">
-                            Nous travaillons avec une clientèle variée :
-
-                            Des particuliers pour leurs résidences
-                            Des entreprises de toutes tailles pour leurs bâtiments industriels ou bureaux
-                            Des collectivités et institutions pour l’éclairage public ou les infrastructures
-                            électriques Notre flexibilité et notre expertise nous permettent de répondre aux exigences de chaque type de client avec professionnalisme.                        </p>
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt quae maxime accusantium voluptate culpa quidem debitis? Perspiciatis blanditiis cumque distinctio,
+                             delectus asperiores nesciunt. Culpa earum temporibus, neque quod velit non.
+                                                  </p>
                     </AccordionTab>
                 </Accordion>
             </div>
