@@ -1,6 +1,5 @@
 // src/App.jsx
 import React, { useState } from 'react';
-import { services } from './service';
 import Sidebar from './SidebarDashbord';
 import AllServices from './ServiceDashbord';
 import Pending from './Pending';
@@ -8,6 +7,7 @@ import Completed from './Completed';
 import Profile from './Profile';
 import ProjectModal from './ProjetModal';
 import NavDash from './NavDash';
+import { services } from './Service';
 
 function LayoutDashbord() {
   const [activeView, setActiveView] = useState('all-services');
