@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
     // État pour gérer la visibilité du mot de passe
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
         // Ici, vous ajouteriez la logique pour la connexion
         console.log('Formulaire de connexion soumis');
-        // Exemple de récupération des valeurs (vous devrez ajouter des refs ou des états pour les inputs)
-        // console.log('Email:', event.target.elements.email.value);
-        // console.log('Mot de passe:', event.target.elements.password.value);
+        navigate("/dashbord")
     };
 
     return (
@@ -72,6 +72,7 @@ const LoginPage = () => {
 
                     <button
                         type="submit"
+                        
                         className="w-full bg-blue-950 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
                     >
                         Se connecter
