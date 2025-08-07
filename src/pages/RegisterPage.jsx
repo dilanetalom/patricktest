@@ -1,10 +1,56 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from "../images/patrick.png"
 import style from "../components/about/about.module.css";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { reset, register } from '../store/authSlice';
+import toast from 'react-hot-toast'
 
 
 const RegisterPage = () => {
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        country: '',
+        city: '',
+        neighborhood: '',
+        phone: '',
+      });
+    
+      const dispatch = useDispatch();
+      const navigate = useNavigate();
+    
+      const { isLoading, isSuccess, isError, message } = useSelector(
+        (state) => state.auth
+      );
+    
+      useEffect(() => {
+        if (isError) {
+          // Affiche le toast d'erreur
+          toast.error(message);
+        }
+        if (isSuccess) {
+          // Affiche le toast de succès
+          toast.success('Inscription réussie ! Redirection...');
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 1000);
+        }
+    
+        // Réinitialise l'état Redux après l'action
+        dispatch(reset());
+      }, [isError, isSuccess, message, navigate, dispatch]);
+    
+      const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+      };
+    
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        dispatch(register(formData));
+      };
     return (
         <div className="flex h-screen bg-white">
             {/* Section de gauche (Connexion) */}
@@ -41,89 +87,120 @@ const RegisterPage = () => {
                     {/* <p className="text-gray-500 mb-8">
                         Let's get you all set up so you can start creating your first onboarding experience.
                     </p> */}
-                    <form className="space-y-6">
+                    <form className="space-y-6" onSubmit={handleSubmit}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>
+                                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">Nom(s) <span className='text-red-600'>*</span></label>
                                 <input
                                     type="text"
                                     id="firstName"
+                                    name="firstName"
+                                    required
+                                    value={formData.firstName}
+                                    onChange={handleChange}
                                     className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                    placeholder="Your first name"
+                                    placeholder="Votre nom"
                                 />
                             </div>
                             <div>
-                                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name</label>
+                                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Prenom(s)<span className='text-red-600'>*</span></label>
                                 <input
                                     type="text"
                                     id="lastName"
+                                    name="lastName"
+                                    required
+                                    value={formData.lastName}
+                                    onChange={handleChange}
                                     className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                    placeholder="Your last name"
+                                    placeholder="Votre prenom"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email <span className='text-red-600'>*</span></label>
                             <input
                                 type="email"
+                                name="email"
+                                required
+                                value={formData.email}
+                                onChange={handleChange}
                                 id="email"
                                 className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                placeholder="Enter your email address"
+                                placeholder="Votre email"
                             />
                         </div>
 
                         {/* Champs ajoutés pour le pays, la ville, le quartier et le numéro de téléphone */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label htmlFor="country" className="block text-sm font-medium text-gray-700">Country</label>
+                                <label htmlFor="country" className="block text-sm font-medium text-gray-700">Pays <span className='text-red-600'>*</span></label>
                                 <input
                                     type="text"
+                                    name="country"
+                                    required
+                                    value={formData.country}
+                                    onChange={handleChange}
                                     id="country"
                                     className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                    placeholder="Your country"
+                                    placeholder="Votre pays"
                                 />
                             </div>
                             <div>
-                                <label htmlFor="city" className="block text-sm font-medium text-gray-700">City</label>
+                                <label htmlFor="city" className="block text-sm font-medium text-gray-700">Ville <span className='text-red-600'>*</span></label>
                                 <input
                                     type="text"
                                     id="city"
+                                    name="city"
+                                    required
+                                    value={formData.city}
+                                    onChange={handleChange}
                                     className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                    placeholder="Your city"
+                                    placeholder="Votre ville"
                                 />
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label htmlFor="neighborhood" className="block text-sm font-medium text-gray-700">Neighborhood</label>
+                                <label htmlFor="neighborhood" className="block text-sm font-medium text-gray-700">Quatier</label>
                                 <input
                                     type="text"
                                     id="neighborhood"
+                                    name="neighborhood"
+                                    value={formData.neighborhood}
+                                    onChange={handleChange}
                                     className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                    placeholder="Your neighborhood"
+                                    placeholder="Votre quartier"
                                 />
                             </div>
                             <div>
-                                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
+                                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Téléphone <span className='text-red-600'>*</span></label>
                                 <input
                                     type="tel"
                                     id="phone"
+                                    name="phone"
+                                    required
+                                    value={formData.phone}
+                                    onChange={handleChange}
                                     className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                    placeholder="Your phone number"
+                                    placeholder="Votre téléphone"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Mot de passe <span className='text-red-600'>*</span></label>
                             <div className="mt-1 relative">
                                 <input
                                     type="password"
                                     id="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
                                     className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm pr-10 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                    placeholder="Enter a strong password"
+                                    placeholder="Mot de passe"
                                 />
                                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
                                     <svg
@@ -148,7 +225,7 @@ const RegisterPage = () => {
                                 className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                             />
                             <label htmlFor="terms" className="ml-2 block text-sm text-gray-900">
-                                I accept BoardMe's <a href="#" className="text-blue-600 hover:underline">Terms & Conditions</a>
+                                J'accepte <a href="#" className="text-blue-600 hover:underline">Les Termes & Conditions</a>
                             </label>
                         </div>
 
@@ -157,7 +234,7 @@ const RegisterPage = () => {
                                 type="submit"
                                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-950 hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             >
-                                SIGN UP
+                                {isLoading ? 'Inscription en cours...' : 'S\'INSCRIRE'}
                             </button>
                         </div>
 

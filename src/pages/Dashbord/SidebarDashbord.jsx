@@ -3,31 +3,51 @@ import React from 'react';
 
 const Sidebar = ({ setActiveView, activeView }) => {
   const navItems = [
-    { name: 'All Services', view: 'all-services' },
-    { name: 'Pending', view: 'pending' },
-    { name: 'In Progress', view: 'in-progress' },
-    { name: 'Completed', view: 'completed' },
-    { name: 'Profile Settings', view: 'profile-settings' },
+    { name: 'Tous les Services', view: 'all-services' },
+    { name: 'En attente', view: 'pending' },
+    { name: 'En cours', view: 'in-progress' },
+    { name: 'Terminé', view: 'completed' },
+    { name: 'Paramètres du Profil', view: 'profile-settings' },
   ];
 
   return (
-    <div className="w-64 bg-gray-800 text-white p-4 h-screen">
-      <div className="text-2xl font-bold mb-8">Dashboard</div>
-      <ul>
-        {navItems.map(item => (
-          <li key={item.view} className="mb-2">
-            <button
-              onClick={() => setActiveView(item.view)}
-              className={`block w-full text-left p-2 rounded-md transition-colors duration-200 ${
-                activeView === item.view ? 'bg-gray-600' : 'hover:bg-gray-700'
-              }`}
-            >
-              {item.name}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <aside className="w-[19%] h-[100vh]  fixed bg-gray-900 text-gray-200 flex flex-col p-6 shadow-2xl">
+      <div className="text-3xl font-extrabold text-white mb-10 tracking-wide">
+        Dashboard
+      </div>
+      <nav className="flex-grow">
+        <ul className="space-y-4">
+          {navItems.map(item => (
+            <li key={item.view}>
+              <button
+                onClick={() => setActiveView(item.view)}
+                className={`flex items-center w-full text-left p-3 rounded-xl transition-all duration-300 transform
+                  ${activeView === item.view 
+                    ? 'bg-gray-700 text-white shadow-lg scale-105' 
+                    : 'text-gray-400 hover:bg-gray-700 hover:text-white'
+                  }`}
+              >
+                {/* Icône optionnelle, à insérer ici */}
+                <span className="ml-3 text-lg font-medium">
+                  {item.name}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      
+      {/* Tu peux ajouter d'autres éléments ici, comme une section utilisateur ou de déconnexion */}
+      <div className="mt-8">
+        <button 
+          onClick={() => console.log('Déconnexion')} 
+          className="flex items-center w-full text-left p-3 rounded-xl text-gray-400  hover:bg-gray-700 hover:text-red-300 transition-colors duration-300"
+        >
+          {/* Icône de déconnexion */}
+          <span className="ml-3 font-medium">Déconnexion</span>
+        </button>
+      </div>
+    </aside>
   );
 };
 

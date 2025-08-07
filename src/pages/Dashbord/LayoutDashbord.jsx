@@ -8,6 +8,7 @@ import Profile from './Profile';
 import ProjectModal from './ProjetModal';
 import NavDash from './NavDash';
 import { services } from './Service';
+import InProgress from './InProgress';
 
 function LayoutDashbord() {
   const [activeView, setActiveView] = useState('all-services');
@@ -48,9 +49,11 @@ function LayoutDashbord() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="w-full flex min-h-[100vh] bg-gray-100">
+      <div className='w-[19%]'>
       <Sidebar setActiveView={setActiveView} activeView={activeView} />
-      <div className="flex-1 flex flex-col">
+      </div>
+      <div className="w-[81%]  flex flex-col">
         <NavDash username={currentUser.name}/>
         <main className='flex-1 p-8 overflow-y-auto'>
         {renderContent()}

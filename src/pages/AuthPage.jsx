@@ -1,9 +1,49 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from "../images/patrick.png";
 import style from "../components/about/about.module.css";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { reset,login } from '../store/authSlice';
+// import { login, reset } from '../store/authSlice'; // Import de la fonction 'login' manquante
+import toast from 'react-hot-toast'
 
 const LoginPage = () => {
+
+    const [formData, setFormData] = useState({
+        email: '',
+        password: '',
+    });
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const { isLoading, isSuccess, isError, message } = useSelector(
+        (state) => state.auth
+    );
+
+    useEffect(() => {
+        if (isError) {
+            toast.error(message);
+        }
+        if (isSuccess) {
+            toast.success('Connexion réussie ! Redirection...');
+            setTimeout(() => {
+                navigate('/dashboard');
+            }, 1000);
+        }
+        dispatch(reset());
+    }, [isError, isSuccess, message, navigate, dispatch]);
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        dispatch(login(formData));
+    };
+
+
     return (
         <div className="flex h-screen bg-white">
             {/* Section de gauche (Login) */}
@@ -39,23 +79,31 @@ const LoginPage = () => {
                 <div className="w-full max-w-lg flex flex-col gap-8 bg-white p-8 rounded-lg  z-10"> {/* Ajout de z-10 pour le formulaire */}
                     <h1 className="text-4xl font-extrabold text-gray-900">Connectez-vous</h1>
                     <p className="text-gray-600">Entrez vos identifiants pour accéder à votre compte.</p>
-                    <form className="space-y-6">
+                    <form className="space-y-6" onSubmit={handleSubmit}>
                         <div>
-                            <label htmlFor="email" className="block text-sm font-semibold text-gray-700">Email</label>
+                            <label htmlFor="email" className="block text-sm font-semibold text-gray-700">Email <span className='text-red-600'>*</span> </label>
                             <input
                                 type="email"
                                 id="email"
+                                name="email"
+                                required
+                                value={formData.email}
+                                onChange={handleChange}
                                 className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 outline-none"
                                 placeholder="Votre adresse email"
                             />
                         </div>
 
                         <div>
-                            <label htmlFor="password" className="block text-sm font-semibold text-gray-700">Mot de passe</label>
+                            <label htmlFor="password" className="block text-sm font-semibold text-gray-700">Mot de passe <span className='text-red-600'>*</span></label>
                             <div className="mt-1 relative">
                                 <input
                                     type="password"
                                     id="password"
+                                    required
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
                                     className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm pr-10 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 outline-none"
                                     placeholder="Votre mot de passe"
                                 />
@@ -83,7 +131,7 @@ const LoginPage = () => {
                                 type="submit"
                                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-md text-sm font-bold text-white bg-blue-950 hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300"
                             >
-                                SE CONNECTER
+                                {isLoading ? 'Connexion en cours...' : 'SE CONNECTER'}
                             </button>
                         </div>
                     </form>
