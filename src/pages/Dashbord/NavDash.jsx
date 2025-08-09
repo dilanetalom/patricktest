@@ -1,12 +1,33 @@
 // src/components/Navbar.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BellIcon, UserCircleIcon } from '@heroicons/react/24/outline'; // Assure-toi d'avoir installé @heroicons/react
 
-const NavDash = ({ username }) => {
+const NavDash = () => {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    const storedToken = localStorage.getItem('token');
+
+    if (storedUser) {
+      setUser(JSON.parse(storedUser)); // Convertir en objet
+    }
+    console.log(user);
+    
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
+
+  if (!user) {
+    return <p>Aucun utilisateur connecté.</p>;
+  }
   return (
     <nav className="bg-white w-full p-4 flex justify-between items-center sticky top-0 z-40 shadow-lg">
       <div className="text-2xl font-extrabold text-gray-900 tracking-wide">
-        Bonjour, {username} !
+        Bonjour, Client
+        {/* {user} ! */}
       </div>
       
       <div className="flex items-center space-x-6">
@@ -21,18 +42,10 @@ const NavDash = ({ username }) => {
         <div className="flex items-center space-x-3">
           <UserCircleIcon className="h-10 w-10 text-gray-400" />
           <div className="text-gray-800 font-semibold text-lg">
-            {username}
+            {/* {user} */}
+            Client
           </div>
         </div>
-
-        {/* Bouton pour les paramètres du profil */}
-        {/* Tu pourrais le rendre plus explicite en ajoutant du texte ou un lien vers la page de profil */}
-        {/* <button
-          onClick={() => alert("Naviguer vers les paramètres du profil")}
-          className="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition-colors duration-200 shadow-md"
-        >
-          Profil
-        </button> */}
       </div>
     </nav>
   );

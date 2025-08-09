@@ -2,12 +2,16 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api/'; // Remplace par l'URL de ton API
+const API_URL = 'https://finixbackend.macinnovafrica.com/api/'; // Remplace par l'URL de ton API
 
 // Crée un thunk asynchrone pour l'inscription
 export const register = createAsyncThunk('auth/register', async (userData, thunkAPI) => {
   try {
     const response = await axios.post(API_URL + 'register', userData);
+    localStorage.setItem('token', response.data.token);
+    localStorage.setItem('user', JSON.stringify(response.data.user)); // S
+    console.log(response.data.token.token);
+    
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data);
@@ -18,11 +22,16 @@ export const register = createAsyncThunk('auth/register', async (userData, thunk
 export const login = createAsyncThunk('auth/login', async (userData, thunkAPI) => {
   try {
     const response = await axios.post(API_URL + 'login', userData);
+    localStorage.setItem('token', response.data.token); // Stocke le token
+    localStorage.setItem('user', JSON.stringify(response.data.user)); // S
+    console.log(response.data.token);
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data);
   }
 });
+
+
 
 const initialState = {
   user: null,
@@ -33,22 +42,29 @@ const initialState = {
   message: '',
 };
 
+// Slice d'authentification
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    // Reducer pour réinitialiser l'état (utile pour le déchargement)
+
+    loginFromStorage: (state, action) => {
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+      state.isSuccess = true;
+      state.isError = false;
+    },
+    // Réinitialiser l'état
     reset: (state) => {
       state.isLoading = false;
       state.isSuccess = false;
       state.isError = false;
       state.message = '';
     },
-    // Reducer pour le logout
+    // Déconnexion
     logout: (state) => {
       state.user = null;
       state.token = null;
-      // Tu peux aussi supprimer le token du localStorage ici
       localStorage.removeItem('token');
       localStorage.removeItem('user');
     },
@@ -94,5 +110,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { reset, logout } = authSlice.actions;
+
+
+export const { reset, logout, loginFromStorage } = authSlice.actions;
 export default authSlice.reducer;

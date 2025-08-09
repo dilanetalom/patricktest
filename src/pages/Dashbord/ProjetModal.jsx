@@ -1,16 +1,45 @@
 // src/components/ProjectModal.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { createProject } from '../../store/projectsSlice';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const ProjectModal = ({ service, onClose, onSubmit }) => {
+const ProjectModal = ({ service, onClose }) => {
+  const dispatch = useDispatch();
+  const { status, error } = useSelector(state => state.projects.createProjectStatus); // Assurez-vous que le state a cette structure
+  
   const [projectName, setProjectName] = useState('');
   const [description, setDescription] = useState('');
   const [objectives, setObjectives] = useState('');
   const [deadline, setDeadline] = useState('');
-  const [priceRange, setPriceRange] = useState('');
-  const [file, setFile] = useState(null); // Nouveau state pour le fichier
-  
-  // Champs spécifiques par service
+  const [clientPrice, setClientPrice] = useState('');
+  const [file, setFile] = useState(null);
   const [specificFields, setSpecificFields] = useState({});
+
+  const { createProjectStatus } = useSelector(state => state.projects);
+ 
+
+    useEffect(() => {
+        // Récupérez le statut et l'erreur de l'objet imbriqué
+        const { status, error } = createProjectStatus;
+
+        if (status === 'succeeded') {
+            toast.success('Projet soumis avec succès !');
+            const timer = setTimeout(() => {
+                onClose();
+            }, 1000);
+            dispatch(resetCreateProjectStatus()); // 🚀 Appelez l'action de réinitialisation
+            return () => clearTimeout(timer);
+        }
+        
+        if (status === 'failed') {
+            const errorMessage = error?.message || 'Une erreur inconnue est survenue.';
+            toast.error(`Erreur lors de la soumission : ${errorMessage}`);
+            dispatch(resetCreateProjectStatus()); // 🚀 Appelez l'action de réinitialisation
+        }
+    }, [createProjectStatus, onClose, dispatch])
+
 
   const handleSpecificChange = (e) => {
     setSpecificFields({
@@ -20,20 +49,34 @@ const ProjectModal = ({ service, onClose, onSubmit }) => {
   };
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]); // Met à jour l'état avec le fichier sélectionné
+    setFile(e.target.files[0]);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ 
-      projectName, 
-      description, 
-      objectives,
-      deadline,
-      priceRange,
-      file, // Ajoute le fichier aux données soumises
-      ...specificFields,
-    });
+    
+    // Récupère le token depuis le localStorage
+    const token = localStorage.getItem('token'); 
+    
+    if (!token) {
+      toast.error("Vous devez être connecté pour soumettre un projet.");
+      return;
+    }
+    
+    const projectData = new FormData();
+    projectData.append('service_id', service.name);
+    projectData.append('name', projectName);
+    projectData.append('description', description);
+    projectData.append('objectives', objectives);
+    projectData.append('deadline', deadline);
+    projectData.append('client_price', clientPrice);
+    // projectData.append('service', clientPrice);
+    if (file) {
+      projectData.append('file', file);
+    }
+    projectData.append('specific_fields', JSON.stringify(specificFields));
+    
+    dispatch(createProject({ projectData, token }));
   };
 
   const getSpecificFields = (serviceName) => {
@@ -113,7 +156,7 @@ const ProjectModal = ({ service, onClose, onSubmit }) => {
         </button>
         <h2 className="text-2xl font-bold text-blue-950 mb-4">Nouveau projet : {service.name}</h2>
         <form onSubmit={handleSubmit}>
-          {/* Champs communs à tous les services */}
+          {/* Champs du formulaire... */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2" htmlFor="projectName">Nom du projet</label>
             <input type="text" id="projectName" value={projectName} onChange={(e) => setProjectName(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md" required />
@@ -131,7 +174,6 @@ const ProjectModal = ({ service, onClose, onSubmit }) => {
             <input type="date" id="deadline" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md" />
           </div>
           
-          {/* Champs spécifiques basés sur le service sélectionné */}
           {getSpecificFields(service.name)}
 
           <div className="mb-4">
@@ -151,22 +193,30 @@ const ProjectModal = ({ service, onClose, onSubmit }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="priceRange">Intervalle de prix</label>
-            <select id="priceRange" value={priceRange} onChange={(e) => setPriceRange(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md" required>
-              <option value="">Sélectionner une option</option>
-              <option value="< 500€">{'< 500€'}</option>
-              <option value="500€ - 1000€">500€ - 1000€</option>
-              <option value="1000€ - 5000€">1000€ - 5000€</option>
-              <option value="> 5000€">{'> 5000€'}</option>
-            </select>
+            <label className="block text-gray-700 mb-2" htmlFor="priceRange">Prix proposé</label>
+            <input type="number" id="priceRange" value={clientPrice} onChange={(e) => setClientPrice(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md" required />
           </div>
           
           <div className="flex justify-end space-x-2">
             <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
               Annuler
             </button>
-            <button type="submit" className="px-4 py-2 bg-blue-950 text-white rounded-md hover:bg-indigo-700">
-              Soumettre
+            <button
+              type="submit"
+              className={`px-4 py-2 text-white rounded-md transition-colors ${status === 'loading' ? 'bg-indigo-400 cursor-not-allowed' : 'bg-blue-950 hover:bg-indigo-700'}`}
+              disabled={status === 'loading'}
+            >
+              {status === 'loading' ? (
+                <div className="flex items-center space-x-2">
+                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Chargement...</span>
+                </div>
+              ) : (
+                'Soumettre'
+              )}
             </button>
           </div>
         </form>
