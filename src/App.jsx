@@ -7,41 +7,68 @@ import LoginPage from "./pages/AuthPage";
 import LayoutDashbord from "./pages/Dashbord/LayoutDashbord";
 import { Toaster } from "react-hot-toast";
 import PrivateRoute from "./components/PrivateRoute";
-import { useDispatch } from 'react-redux';
-import { useEffect } from "react";
-import { loginFromStorage } from "./store/authSlice";
+// import { useDispatch } from 'react-redux';
+
+import { ToastContainer } from "react-toastify";
+import Pending from "./pages/Dashbord/Pending";
+import InProgress from "./pages/Dashbord/InProgress";
+import Completed from "./pages/Dashbord/Completed";
+import Profile from "./pages/Dashbord/Profile";
+import AllServices from "./pages/Dashbord/ServiceDashbord";
+import User from "./pages/Dashbord/gestion/User";
+import { useEffect, useState } from "react";
 
 function App() {
 
-  const dispatch = useDispatch();
+  const [user, setUser] = useState({})
 
-  // useEffect(() => {
+  useEffect(() => {
+    const users = JSON.parse(localStorage.getItem('user'));
+   if (users) {
+    setUser(users)
+   }
 
-  //   const user = JSON.parse(localStorage.getItem('user'));
-  //   const token = localStorage.getItem('token');
-
-  //   if (user && token) {
-  //     dispatch(loginFromStorage({ user, token }));
-  //   }
-  // }, [dispatch]);
+  }, []);
 
   return (
-   <>
-   <Toaster />
-   <Router>
-    <Routes>
-      <Route path="/" element={<Portfolio/>} />
-      <Route path="/contact" element={<Contact/>} />
-      <Route path="/about" element={<Apropos/>} />
-      <Route path="/login" element={<LoginPage/>} />
-      <Route path="/register" element={<RegisterPage />} />
+    <>
+      <Toaster />
+      <ToastContainer />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Portfolio />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<Apropos />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
-    
-      <Route path="/dashbord" element={<LayoutDashbord />} />
-    
-    </Routes>
-   </Router>
-   </>
+          <Route element={<PrivateRoute />}>
+            {user.role === "admin" ?
+              <>
+                <Route path="/dashbord" element={<AllServices />} />
+                <Route path="/pending" element={<Pending />} />
+                <Route path="/in-progress" element={<InProgress />} />
+                <Route path="/completed" element={<Completed />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/user" element={<User />} />
+              </> :
+              <>
+                <Route path="/dashbord" element={<AllServices />} />
+                <Route path="/pending" element={<Pending />} />
+                <Route path="/in-progress" element={<InProgress />} />
+                <Route path="/completed" element={<Completed />} />
+                <Route path="/profile" element={<Profile />} />
+                {/* <Route path="/user" element={<User />} /> */}
+                </>
+
+            }
+
+          </Route>
+
+
+        </Routes>
+      </Router>
+    </>
   );
 }
 

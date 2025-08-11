@@ -50,7 +50,7 @@ const LoginPage = () => {
             <div className="hidden lg:flex w-1/2 bg-blue-950 text-white flex-col gap-4 justify-center items-center p-8 relative">
                 {/* L'image de fond */}
                 <div className="top-8 left-8 text-2xl font-bold">
-                    <div className={`w-full h-full ${style.about}`}>
+                    <div className={`w-full h-full bg-gray-50 rounded-full`}>
                         <img
                             src={logo}
                             alt=""

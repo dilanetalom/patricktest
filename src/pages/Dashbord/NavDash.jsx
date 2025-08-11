@@ -3,31 +3,50 @@ import React, { useEffect, useState } from 'react';
 import { BellIcon, UserCircleIcon } from '@heroicons/react/24/outline'; // Assure-toi d'avoir installé @heroicons/react
 
 const NavDash = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
   const [token, setToken] = useState(null);
 
-  useEffect(() => {
+   // Premier useEffect pour charger les données du localStorage
+   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('token');
 
-    if (storedUser) {
-      setUser(JSON.parse(storedUser)); // Convertir en objet
+    if (storedUser) { 
+      setUser(JSON.parse(storedUser));
     }
-    console.log(user);
     
     if (storedToken) {
       setToken(storedToken);
     }
-  }, []);
+  }, []); // Le tableau de dépendances vide garantit qu'il ne s'exécute qu'au montage
+
+  // Deuxième useEffect pour surveiller les changements de 'user'
+  useEffect(() => {
+    // Ce console.log s'exécutera après que l'état 'user' a été mis à jour
+    console.log("Valeur de l'utilisateur après mise à jour :", user);
+
+    if (!user) {
+        // Redirection ou autre action si l'utilisateur n'est pas connecté
+        // ...
+    }
+    
+  }, [user]); // Le hook s'exécute à chaque fois que 'user' change
 
   if (!user) {
     return <p>Aucun utilisateur connecté.</p>;
   }
+
+
+
+
+
   return (
     <nav className="bg-white w-full p-4 flex justify-between items-center sticky top-0 z-40 shadow-lg">
-      <div className="text-2xl font-extrabold text-gray-900 tracking-wide">
-        Bonjour, Client
-        {/* {user} ! */}
+      <div className="text-2xl  text-gray-900 tracking-wide">
+      <span className='font-semibold text-lg'>       Bonjour,  </span>
+   
+        <span className=' text-lg'>  {user?user.firstName:null} </span>!
+        <p className=' text-lg'>De quoi avez vous besoin ?</p>
       </div>
       
       <div className="flex items-center space-x-6">
@@ -41,9 +60,10 @@ const NavDash = () => {
         {/* Espace pour l'avatar ou le nom de l'utilisateur */}
         <div className="flex items-center space-x-3">
           <UserCircleIcon className="h-10 w-10 text-gray-400" />
-          <div className="text-gray-800 font-semibold text-lg">
+          <div className="text-gray-800 ">
             {/* {user} */}
-            Client
+           <span className='font-semibold text-lg'>  {user?user.firstName:null} </span>
+            <p className='text-md'>{user?user.role:null} </p>
           </div>
         </div>
       </div>

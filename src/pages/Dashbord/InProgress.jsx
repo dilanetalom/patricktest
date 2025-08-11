@@ -1,8 +1,12 @@
 import React from 'react'
+import LayoutDashbord from './LayoutDashbord'
 
 function InProgress() {
   return (
-    <div>InProgress</div>
+    <LayoutDashbord>
+          <div>InProgress</div>
+    </LayoutDashbord>
+  
   )
 }
 

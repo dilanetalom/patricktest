@@ -1,11 +1,15 @@
 // src/components/Pending.jsx
 import React from 'react';
+import LayoutDashbord from './LayoutDashbord';
 
-const Pending = ({ projects }) => {
+const Pending = () => {
+ 
   return (
-    <div>
+   <>
+   <LayoutDashbord>
+   <div>
       <h2 className="text-3xl font-bold mb-6 text-gray-800">Projets en attente</h2>
-      {projects.length > 0 ? (
+      {/* {projects.length > 0 ? (
         <div className="space-y-4">
           {projects.map(project => (
             <div key={project.id} className="bg-white p-6 rounded-lg shadow-md border-l-4 border-yellow-500">
@@ -20,8 +24,10 @@ const Pending = ({ projects }) => {
         </div>
       ) : (
         <p className="text-gray-500">Vous n'avez aucun projet en attente.</p>
-      )}
+      )} */}
     </div>
+   </LayoutDashbord>
+   </>
   );
 };
 

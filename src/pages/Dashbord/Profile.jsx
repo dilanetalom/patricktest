@@ -1,8 +1,11 @@
 import React from 'react'
+import LayoutDashbord from './LayoutDashbord'
 
 function Profile() {
   return (
-    <div>Profile</div>
+   <LayoutDashbord>
+     <div>Profile</div>
+   </LayoutDashbord>
   )
 }
 
