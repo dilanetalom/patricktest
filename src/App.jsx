@@ -27,7 +27,6 @@ function App() {
    if (users) {
     setUser(users)
    }
-
   }, []);
 
   return (

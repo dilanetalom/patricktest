@@ -31,6 +31,14 @@ export const register = createAsyncThunk('auth/register', async (userData, thunk
     return thunkAPI.rejectWithValue(error.response.data);
   }
 });
+export const register2 = createAsyncThunk('auth/register2', async (userData, thunkAPI) => {
+  try {
+    const response = await axios.post(API_URL + 'register', userData);
+    return response.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data);
+  }
+});
 
 // Connexion
 export const login = createAsyncThunk('auth/login', async (userData, thunkAPI) => {
@@ -120,6 +128,23 @@ const authSlice = createSlice({
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       })
+
+
+      .addCase(register2.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(register2.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+   
+      })
+      .addCase(register2.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload.message || 'Inscription échouée.';
+      })
+
+
       // Connexion
       .addCase(login.pending, (state) => {
         state.isLoading = true;

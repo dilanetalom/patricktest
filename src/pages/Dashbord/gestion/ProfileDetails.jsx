@@ -26,7 +26,7 @@ const ProfileViewModal = ({ isOpen, onClose, user }) => {
                         <FaUserCircle className="text-blue-950 w-8 h-8" />
                         <div className="flex flex-col">
                             <span className="text-lg font-semibold text-gray-700">Nom complet</span>
-                            <span className="text-2xl font-bold text-gray-900">{user.firstName} {user.lastName}</span>
+                            <span className="text-2xl font-bold text-gray-900">{user.firstName} {user.lastName} ({user.role})</span>
                         </div>
                     </div>
                     <div className="flex items-center space-x-4">
