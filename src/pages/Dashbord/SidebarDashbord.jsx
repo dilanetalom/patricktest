@@ -13,7 +13,7 @@ const Sidebar = ({ setActiveView, activeView }) => {
     { name: 'Paramètres du Profil', view: '/profile' },
   ];
   const navItem = [
-    { name: 'Tous les Services', view: '/dashbord' },
+    // { name: 'Tous les Services', view: '/dashbord' },
     { name: 'Nouveaux projets', view: '/pending' },
     { name: 'Projets En cours', view: '/in-progress' },
     { name: 'Projets Terminés', view: '/completed' },

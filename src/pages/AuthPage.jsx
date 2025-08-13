@@ -28,7 +28,12 @@ const LoginPage = () => {
         if (isSuccess) {
             toast.success('Connexion réussie ! Redirection...');
             setTimeout(() => {
+               const user=  localStorage.getItem('user')
+               if (user.role === 'client') {
                 navigate('/dashbord');
+               }else{
+                navigate('/pending');
+               }
             }, 1000);
         }
         dispatch(reset());

@@ -2,8 +2,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const API_URL = 'https://finixbackend.macinnovafrica.com/api/'; 
-// const API_URL = 'http://127.0.0.1:8000/api/'; 
+// const API_URL = 'https://finixbackend.macinnovafrica.com/api/'; 
+const API_URL = 'http://127.0.0.1:8000/api/'; 
 
 // Action pour créer un nouveau projet
 export const createProject = createAsyncThunk('projects/createProject', async ({ projectData, token }, { rejectWithValue }) => {
@@ -68,7 +68,11 @@ const projectsSlice = createSlice({
     // C'est la ligne CRUCIALE qui manquait. Elle initialise l'état.
     createProjectStatus: { status: 'idle', error: null }, 
   },
-  reducers: {},
+  reducers: {
+    resetCreateProjectStatus: (state) => {
+      state.createProjectStatus = { status: 'idle', error: null };
+    }
+  },
   extraReducers: (builder) => {
     builder
 
@@ -109,4 +113,5 @@ const projectsSlice = createSlice({
   },
 });
 
+export const { resetCreateProjectStatus } = projectsSlice.actions;
 export default projectsSlice.reducer;

@@ -1,7 +1,7 @@
 // src/components/ProjectModal.jsx
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createProject } from '../../store/projectsSlice';
+import { createProject, resetCreateProjectStatus } from '../../store/projectsSlice';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -16,6 +16,7 @@ const ProjectModal = ({ service, onClose }) => {
   const [clientPrice, setClientPrice] = useState('');
   const [file, setFile] = useState(null);
   const [specificFields, setSpecificFields] = useState({});
+  const [currency, setCurrency] = useState('FCFA');
 
   const { createProjectStatus } = useSelector(state => state.projects);
  
@@ -193,8 +194,25 @@ const ProjectModal = ({ service, onClose }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="priceRange">Prix proposé</label>
-            <input type="number" id="priceRange" value={clientPrice} onChange={(e) => setClientPrice(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md" required />
+            <label className="block text-gray-700 mb-2">Prix proposé</label>
+            <div className="flex space-x-2">
+              <select
+                className="p-2 border border-gray-300 rounded-md"
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+              >
+                <option value="FCFA">FCFA</option>
+                <option value="USD">USD</option>
+              </select>
+              <input
+                type="number"
+                id="priceRange"
+                value={clientPrice}
+                onChange={(e) => setClientPrice(e.target.value)}
+                className="flex-1 p-2 border border-gray-300 rounded-md"
+                required
+              />
+            </div>
           </div>
           
           <div className="flex justify-end space-x-2">
