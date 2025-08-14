@@ -3,7 +3,9 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 // Crée une instance d'Axios avec l'URL de base pour éviter la répétition
-const API_URL = 'http://127.0.0.1:8000/api/'; 
+
+// const API_URL = 'http://127.0.0.1:8000/api/';
+const API_URL = 'https://finixbackend.macinnovafrica.com/api/';
 const axiosInstance = axios.create({
   baseURL: API_URL,
 });

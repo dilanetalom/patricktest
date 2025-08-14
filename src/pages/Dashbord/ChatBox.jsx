@@ -8,7 +8,9 @@ import Pusher from 'pusher-js';
 // Import our chatSlice actions and thunks
 import { addMessage, fetchMessages } from '../../store/chatSlice';
 
-const API_URL = 'http://127.0.0.1:8000/api/';
+
+// const API_URL = 'http://127.0.0.1:8000/api/';
+const API_URL = 'https://finixbackend.macinnovafrica.com/api/';
 
 const ChatBox = ({ projectId }) => {
     const dispatch = useDispatch();

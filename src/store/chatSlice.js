@@ -1,7 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const API_URL = 'http://127.0.0.1:8000/api/';
+
+// const API_URL = 'http://127.0.0.1:8000/api/';
+const API_URL = 'https://finixbackend.macinnovafrica.com/api/';
 
 // Action asynchrone pour récupérer les messages d'une conversation
 export const fetchMessages = createAsyncThunk(
