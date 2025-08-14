@@ -17,6 +17,7 @@ import Profile from "./pages/Dashbord/Profile";
 import AllServices from "./pages/Dashbord/ServiceDashbord";
 import User from "./pages/Dashbord/gestion/User";
 import { useEffect, useState } from "react";
+import Notifications from "./pages/Dashbord/Notifications";
 
 function App() {
 
@@ -33,6 +34,7 @@ function App() {
     <>
       <Toaster />
       <ToastContainer />
+      <Notifications />
       <Router>
         <Routes>
           <Route path="/" element={<Portfolio />} />

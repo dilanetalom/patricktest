@@ -3,8 +3,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-// const API_URL = 'http://127.0.0.1:8000/api/';
-const API_URL = 'https://finixbackend.macinnovafrica.com/api/';
+const API_URL = 'http://127.0.0.1:8000/api/';
+// const API_URL = 'https://finixbackend.macinnovafrica.com/api/';
 
 // --- Initialisation de l'état à partir du localStorage ---
 // Cette partie s'exécute une seule fois au chargement de l'application

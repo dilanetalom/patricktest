@@ -7,8 +7,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const ProjectModal = ({ service, onClose }) => {
   const dispatch = useDispatch();
-  const { status, error } = useSelector(state => state.projects.createProjectStatus); // Assurez-vous que le state a cette structure
-  
+// Assurez-vous que le state a cette structure
+
   const [projectName, setProjectName] = useState('');
   const [description, setDescription] = useState('');
   const [objectives, setObjectives] = useState('');
@@ -18,28 +18,28 @@ const ProjectModal = ({ service, onClose }) => {
   const [specificFields, setSpecificFields] = useState({});
   const [currency, setCurrency] = useState('FCFA');
 
-  const { createProjectStatus } = useSelector(state => state.projects);
- 
+  const { status, error } = useSelector(state => state.projects.createProjectStatus);
 
-    useEffect(() => {
-        // Récupérez le statut et l'erreur de l'objet imbriqué
-        const { status, error } = createProjectStatus;
+  useEffect(() => {
+    if (status === 'succeeded') {
+      toast.success('Projet soumis avec succès !');
+   
 
-        if (status === 'succeeded') {
-            toast.success('Projet soumis avec succès !');
-            const timer = setTimeout(() => {
-                onClose();
-            }, 1000);
-            dispatch(resetCreateProjectStatus()); // 🚀 Appelez l'action de réinitialisation
-            return () => clearTimeout(timer);
-        }
-        
-        if (status === 'failed') {
-            const errorMessage = error?.message || 'Une erreur inconnue est survenue.';
-            toast.error(`Erreur lors de la soumission : ${errorMessage}`);
-            dispatch(resetCreateProjectStatus()); // 🚀 Appelez l'action de réinitialisation
-        }
-    }, [createProjectStatus, onClose, dispatch])
+      const timer = setTimeout(() => {
+        onClose();
+        dispatch(resetCreateProjectStatus());
+      }, 1500);
+
+      return () => clearTimeout(timer);
+    }
+
+    if (status === 'failed') {
+      const errorMessage = error?.message || 'Une erreur inconnue est survenue.';
+      toast.error(`Erreur lors de la soumission : ${errorMessage}`);
+      // Réinitialisez l'état après l'échec
+      dispatch(resetCreateProjectStatus());
+    }
+  }, [status, error, onClose, dispatch]);
 
 
   const handleSpecificChange = (e) => {
@@ -55,28 +55,34 @@ const ProjectModal = ({ service, onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Récupère le token depuis le localStorage
-    const token = localStorage.getItem('token'); 
-    
+    const token = localStorage.getItem('token');
+
     if (!token) {
       toast.error("Vous devez être connecté pour soumettre un projet.");
       return;
     }
-    
+
     const projectData = new FormData();
-    projectData.append('service_id', service.name);
+    projectData.append('service', service.name);
     projectData.append('name', projectName);
     projectData.append('description', description);
     projectData.append('objectives', objectives);
     projectData.append('deadline', deadline);
     projectData.append('client_price', clientPrice);
+    projectData.append('device', currency);
     // projectData.append('service', clientPrice);
     if (file) {
       projectData.append('file', file);
     }
     projectData.append('specific_fields', JSON.stringify(specificFields));
-    
+
+    for (const [key, value] of projectData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+
+
     dispatch(createProject({ projectData, token }));
   };
 
@@ -174,15 +180,15 @@ const ProjectModal = ({ service, onClose }) => {
             <label className="block text-gray-700 mb-2" htmlFor="deadline">Date limite souhaitée</label>
             <input type="date" id="deadline" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md" />
           </div>
-          
+
           {getSpecificFields(service.name)}
 
           <div className="mb-4">
             <label className="block text-gray-700 mb-2" htmlFor="file-upload">Joindre un fichier (cahier des charges, maquettes...)</label>
-            <input 
-              type="file" 
-              id="file-upload" 
-              onChange={handleFileChange} 
+            <input
+              type="file"
+              id="file-upload"
+              onChange={handleFileChange}
               className="w-full text-sm text-gray-500
                          file:mr-4 file:py-2 file:px-4
                          file:rounded-full file:border-0
@@ -201,8 +207,16 @@ const ProjectModal = ({ service, onClose }) => {
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
               >
-                <option value="FCFA">FCFA</option>
-                <option value="USD">USD</option>
+                <option value="XOF">FCFA (XOF)</option>
+                <option value="XAF">FCFA (XAF)</option>
+                <option value="USD">USD (Dollar américain)</option>
+                <option value="EUR">EUR (Euro)</option>
+                <option value="GBP">GBP (Livre Sterling)</option>
+                <option value="JPY">JPY (Yen japonais)</option>
+                <option value="CHF">CHF (Franc suisse)</option>
+                <option value="CAD">CAD (Dollar canadien)</option>
+                <option value="AUD">AUD (Dollar australien)</option>
+                <option value="NGN">NGN (Naira nigérian)</option>
               </select>
               <input
                 type="number"
@@ -214,7 +228,7 @@ const ProjectModal = ({ service, onClose }) => {
               />
             </div>
           </div>
-          
+
           <div className="flex justify-end space-x-2">
             <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
               Annuler

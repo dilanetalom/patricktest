@@ -14,6 +14,8 @@ const LoginPage = () => {
         password: '',
     });
 
+    const [view, setView ] = useState(false)
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -103,7 +105,8 @@ const LoginPage = () => {
                             <label htmlFor="password" className="block text-sm font-semibold text-gray-700">Mot de passe <span className='text-red-600'>*</span></label>
                             <div className="mt-1 relative">
                                 <input
-                                    type="password"
+                                type={view?"text":"password"}
+                                   
                                     id="password"
                                     required
                                     name="password"
@@ -112,7 +115,7 @@ const LoginPage = () => {
                                     className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm pr-10 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 outline-none"
                                     placeholder="Votre mot de passe"
                                 />
-                                <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
+                                <div onClick={()=>setView(!view)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"

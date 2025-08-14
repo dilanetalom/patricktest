@@ -15,6 +15,7 @@ const AllServices = ( ) => {
     setIsModalOpen(true);
   };
 
+
   const addProject = (project) => {
     setProjects(prevProjects => [
       ...prevProjects,
@@ -24,10 +25,11 @@ const AllServices = ( ) => {
     setActiveView('pending');
   };
 
+
   return (
    <>
    <LayoutDashbord>
-   {isModalOpen && <ProjectModal service={selectedService} onClose={() => setIsModalOpen(false)} onSubmit={addProject} />}
+   {isModalOpen && <ProjectModal service={selectedService}  onClose={() => setIsModalOpen(false)} onSubmit={addProject} />}
 
    <div >
       <h2 className="text-3xl  mb-6 text-gray-800">Tous les services</h2>
