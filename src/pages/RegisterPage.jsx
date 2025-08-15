@@ -23,30 +23,30 @@ const RegisterPage = () => {
       const navigate = useNavigate();
        const [view, setView ] = useState(false)
     
-      const { isLoading, isSuccess, isError, message } = useSelector(
-        (state) => state.auth
-      );
-    
-      useEffect(() => {
-        if (isError) {
-          toast.error(message);
-          dispatch(reset());
+       const { user, isLoading, isSuccess, isError, message } = useSelector((state) => state.auth);
+
+  // Effet pour gérer notifications et redirection
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+      dispatch(reset());
+    }
+
+    if (isSuccess && user) {
+      toast.success('Connexion réussie ! Redirection...');
+      const timer = setTimeout(() => {
+        console.log(user);
+        
+        if (user.role === 'client') {
+          navigate('/bords');
+        } else {
+          navigate('/bord');
         }
-    
-        if (isSuccess && user) {
-          toast.success('Inscription réussie ! Redirection...');
-          const timer = setTimeout(() => {
-            if (user.role === 'client') {
-              navigate('/bords');
-            } else {
-              navigate('/bord');
-            }
-            dispatch(reset());
-          }, 1000);
-    
-          return () => clearTimeout(timer);
-        }
-      }, [isError, isSuccess, message, navigate, dispatch]);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isError, isSuccess, message, user, navigate, dispatch]);
     
       const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
