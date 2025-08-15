@@ -4,14 +4,24 @@ import React from 'react';
 const ServiceCard = ({ service, onClick }) => {
   return (
     <div
-      onClick={onClick}
-      className="bg-white rounded-lg shadow-md p-6  transform transition-transform duration-200 hover:scale-105 hover:shadow-xl cursor-pointer"
-    >
-      <h3 className="text-xl font-semibold text-gray-900 mb-2">{service.name}</h3>
-      <p className="text-gray-600">
-        Cliquez pour soumettre un projet de {service.name.toLowerCase()}.
+    onClick={onClick}
+    className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl hover:border-blue-500 transition-all duration-300 cursor-pointer group"
+  >
+    {/* En-tête colorée */}
+    <div className="px-6 py-4 bg-gray-400">
+      <h3 className="text-lg sm:text-xl font-bold text-white">
+        {service.name}
+      </h3>
+    </div>
+  
+    {/* Contenu */}
+    <div className="px-6 py-5 space-y-2">
+      <p className="text-gray-600 group-hover:text-gray-800 transition-colors duration-200">
+        Cliquez pour soumettre un projet de{" "}
+        <span className="font-medium">{service.name.toLowerCase()}</span>.
       </p>
     </div>
+  </div>
   );
 };
 
