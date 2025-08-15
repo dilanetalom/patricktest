@@ -29,19 +29,23 @@ const RegisterPage = () => {
     
       useEffect(() => {
         if (isError) {
-          // Affiche le toast d'erreur
           toast.error(message);
-        }
-        if (isSuccess) {
-          // Affiche le toast de succès
-          toast.success('Inscription réussie ! Redirection...');
-          setTimeout(() => {
-            navigate('/dashbord');
-          }, 1000);
+          dispatch(reset());
         }
     
-        // Réinitialise l'état Redux après l'action
-        dispatch(reset());
+        if (isSuccess && user) {
+          toast.success('Inscription réussie ! Redirection...');
+          const timer = setTimeout(() => {
+            if (user.role === 'client') {
+              navigate('/bords');
+            } else {
+              navigate('/bord');
+            }
+            dispatch(reset());
+          }, 1000);
+    
+          return () => clearTimeout(timer);
+        }
       }, [isError, isSuccess, message, navigate, dispatch]);
     
       const handleChange = (e) => {
@@ -203,7 +207,7 @@ const RegisterPage = () => {
                                     className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm pr-10 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                     placeholder="Mot de passe"
                                 />
-                                <div onClick={()=>setView(!view)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
+                                <div onClick={()=>setView(!view)}  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"

@@ -1,104 +1,82 @@
 // src/store/authSlice.js
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { API_URL } from './url';
 
-// const API_URL = 'http://127.0.0.1:8000/api/';
-const API_URL = 'https://finixbackend.macinnovafrica.com/api/';
+axios.defaults.withCredentials = true;
 
-// --- Initialisation de l'état à partir du localStorage ---
-// Cette partie s'exécute une seule fois au chargement de l'application
-const storedToken = localStorage.getItem('token');
-const storedUser = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+// --- Register ---
+export const register = createAsyncThunk('auth/register', async (userData, thunkAPI) => {
+  try {
+    const response = await axios.post(API_URL + 'register', userData, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data || 'Erreur lors de l\'inscription');
+  }
+});
+
+// --- Login ---
+export const login = createAsyncThunk('auth/login', async (userData, thunkAPI) => {
+  try {
+    const response = await axios.post(API_URL + 'login', userData, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data || 'Erreur lors de la connexion');
+  }
+});
+
+// --- Logout ---
+export const logout = createAsyncThunk('auth/logout', async () => {
+  await axios.post(API_URL + 'logout', {}, { withCredentials: true });
+});
+
+// --- Get Profile ---
+export const getProfile = createAsyncThunk('auth/me', async (_, thunkAPI) => {
+  try {
+    const token = sessionStorage.getItem('token');
+    if (!token) throw new Error('Aucun token');
+    const response = await axios.get(API_URL + 'me', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data || 'Impossible de récupérer le profil');
+  }
+});
+
+// --- Get All Users ---
+export const getAllUsers = createAsyncThunk('auth/getAllUsers', async (_, thunkAPI) => {
+  try {
+    const token = sessionStorage.getItem('token');
+    if (!token) throw new Error('Aucun token');
+    const response = await axios.get(API_URL + 'users', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data || 'Impossible de récupérer les utilisateurs');
+  }
+});
+
+// --- Initial State ---
+const storedToken = sessionStorage.getItem('token');
+const storedUser = sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')) : null;
 
 const initialState = {
-  user: storedUser,
-  token: storedToken,
-  allUsers: [], // Nouvel état pour stocker tous les utilisateurs
+  user: storedUser || null,
+  token: storedToken || null,
+  users: [],
   isLoading: false,
-  isSuccess: storedToken !== null, // L'état est "succès" si un token est trouvé
+  isSuccess: false,
   isError: false,
   message: '',
 };
 
-// --- Thunks asynchrones pour les requêtes à l'API ---
-
-// Inscription
-export const register = createAsyncThunk('auth/register', async (userData, thunkAPI) => {
-  try {
-    const response = await axios.post(API_URL + 'register', userData);
-    return response.data;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data);
-  }
-});
-export const register2 = createAsyncThunk('auth/register2', async (userData, thunkAPI) => {
-  try {
-    const response = await axios.post(API_URL + 'register', userData);
-    return response.data;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data);
-  }
-});
-
-// Connexion
-export const login = createAsyncThunk('auth/login', async (userData, thunkAPI) => {
-  try {
-    const response = await axios.post(API_URL + 'login', userData);
-    return response.data;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data);
-  }
-});
-
-// Déconnexion (côté client)
-export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
-  try {
-    const token = localStorage.getItem('token');
-    if (token) {
-      await axios.post(API_URL + 'logout', null, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    }
-    // La suppression des données et le retour se font après la requête
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    return 'Déconnexion réussie';
-  } catch (error) {
-    // En cas d'erreur serveur, on déconnecte quand même côté client
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    return thunkAPI.rejectWithValue(error.response.data);
-  }
-});
-
-// Récupérer tous les utilisateurs
-export const getAllUsers = createAsyncThunk('auth/getAllUsers', async (_, thunkAPI) => {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      return thunkAPI.rejectWithValue('Non autorisé');
-    }
-    const response = await axios.get(API_URL + 'users', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data);
-  }
-});
-
-
-// --- Slice d'authentification ---
+// --- Slice ---
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    // Réinitialiser l'état
     reset: (state) => {
       state.isLoading = false;
       state.isSuccess = false;
@@ -108,88 +86,70 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Inscription
-      .addCase(register.pending, (state) => {
-        state.isLoading = true;
-      })
+      // Register
+      .addCase(register.pending, (state) => { state.isLoading = true; })
       .addCase(register.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
-        localStorage.setItem('token', action.payload.token);
+        sessionStorage.setItem('token', action.payload.token);
+        sessionStorage.setItem('user', JSON.stringify(action.payload.user));
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.message = action.payload.message || 'Inscription échouée.';
-        state.user = null;
-        state.token = null;
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        state.message = action.payload?.message || 'Inscription échouée';
       })
 
-
-      .addCase(register2.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(register2.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-   
-      })
-      .addCase(register2.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload.message || 'Inscription échouée.';
-      })
-
-
-      // Connexion
-      .addCase(login.pending, (state) => {
-        state.isLoading = true;
-      })
+      // Login
+      .addCase(login.pending, (state) => { state.isLoading = true; })
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
-        localStorage.setItem('token', action.payload.token);
+        sessionStorage.setItem('token', action.payload.token);
+        sessionStorage.setItem('user', JSON.stringify(action.payload.user));
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.message = action.payload.message || 'Connexion échouée.';
-        state.user = null;
-        state.token = null;
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        state.message = action.payload?.message || 'Connexion échouée';
       })
-      // Déconnexion
+
+      // Logout
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
         state.token = null;
-        state.isSuccess = false;
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
       })
-      // Récupérer tous les utilisateurs
-      .addCase(getAllUsers.pending, (state) => {
-        state.isLoading = true;
+
+      // Get Profile
+      .addCase(getProfile.fulfilled, (state, action) => {
+        state.user = action.payload;
       })
+      .addCase(getProfile.rejected, (state, action) => {
+        state.user = null;
+        state.token = null;
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
+      })
+
+      // Get All Users
+      .addCase(getAllUsers.pending, (state) => { state.isLoading = true; })
       .addCase(getAllUsers.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isSuccess = true;
-        state.allUsers = action.payload; // Stocke la liste des utilisateurs
+        state.users = action.payload;
       })
       .addCase(getAllUsers.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.message = action.payload || 'Échec de la récupération des utilisateurs.';
-        state.allUsers = [];
+        state.message = action.payload || 'Impossible de récupérer les utilisateurs';
       });
   },
 });
 
-export const { reset } = authSlice.actions;
+export const { reset } = authSlice.actions; // actions du slice
 export default authSlice.reducer;

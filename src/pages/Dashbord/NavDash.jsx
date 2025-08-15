@@ -8,16 +8,16 @@ const NavDash = () => {
 
    // Premier useEffect pour charger les données du localStorage
    useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    const storedToken = localStorage.getItem('token');
+    const storedUser = sessionStorage.getItem('user');
+    // const storedToken = localStorage.getItem('token');
 
     if (storedUser) { 
       setUser(JSON.parse(storedUser));
     }
     
-    if (storedToken) {
-      setToken(storedToken);
-    }
+    // if (storedToken) {
+    //   setToken(storedToken);
+    // }
   }, []); // Le tableau de dépendances vide garantit qu'il ne s'exécute qu'au montage
 
   // Deuxième useEffect pour surveiller les changements de 'user'

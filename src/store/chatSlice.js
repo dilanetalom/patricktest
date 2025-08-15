@@ -1,16 +1,16 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { API_URL } from './url';
 
 
-// const API_URL = 'http://127.0.0.1:8000/api/';
-const API_URL = 'https://finixbackend.macinnovafrica.com/api/';
 
 // Action asynchrone pour récupérer les messages d'une conversation
 export const fetchMessages = createAsyncThunk(
   'chat/fetchMessages',
   async (projectId, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
+        if (!token) throw new Error('Aucun token');
       const response = await axios.get(`${API_URL}projects/${projectId}/conversation`, {
         headers: { Authorization: `Bearer ${token}` },
       });

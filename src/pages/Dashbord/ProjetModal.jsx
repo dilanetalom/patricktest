@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createProject, resetCreateProjectStatus } from '../../store/projectsSlice';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 
 const ProjectModal = ({ service, onClose }) => {
   const dispatch = useDispatch();
@@ -16,10 +17,10 @@ const ProjectModal = ({ service, onClose }) => {
   const [clientPrice, setClientPrice] = useState('');
   const [file, setFile] = useState(null);
   const [specificFields, setSpecificFields] = useState({});
-  const [currency, setCurrency] = useState('FCFA');
+  const [currency, setCurrency] = useState('USD (Dollar américain)');
 
   const { status, error } = useSelector(state => state.projects.createProjectStatus);
-
+const navigate = useNavigate();
   useEffect(() => {
     if (status === 'succeeded') {
       toast.success('Projet soumis avec succès !');
@@ -27,6 +28,7 @@ const ProjectModal = ({ service, onClose }) => {
 
       const timer = setTimeout(() => {
         onClose();
+        navigate("/pending")
         dispatch(resetCreateProjectStatus());
       }, 1500);
 
@@ -83,7 +85,7 @@ const ProjectModal = ({ service, onClose }) => {
     }
 
 
-    dispatch(createProject({ projectData, token }));
+    dispatch(createProject( projectData ));
   };
 
   const getSpecificFields = (serviceName) => {
@@ -207,9 +209,10 @@ const ProjectModal = ({ service, onClose }) => {
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
               >
+               
+                <option value="USD">USD (Dollar américain)</option>
                 <option value="XOF">FCFA (XOF)</option>
                 <option value="XAF">FCFA (XAF)</option>
-                <option value="USD">USD (Dollar américain)</option>
                 <option value="EUR">EUR (Euro)</option>
                 <option value="GBP">GBP (Livre Sterling)</option>
                 <option value="JPY">JPY (Yen japonais)</option>

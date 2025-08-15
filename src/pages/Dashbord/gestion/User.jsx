@@ -57,8 +57,9 @@ const User = () => {
         if (isError) {
             toast.error(message);
         }
+        
     }, [dispatch, isError, message]);
-
+    console.log(allUsers);
     // Logique de pagination
     // Assurez-vous que allUsers est un tableau avant de l'utiliser
     const usersToDisplay = Array.isArray(allUsers?.data) ? allUsers.data : [];

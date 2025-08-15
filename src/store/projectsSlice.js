@@ -1,145 +1,170 @@
 // src/features/projects/projectsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axiosInstance from './services/axiosInstance';
 
-// Crée une instance d'Axios avec l'URL de base pour éviter la répétition
+// --- Thunks ---
 
-// const API_URL = 'http://127.0.0.1:8000/api/';
-const API_URL = 'https://finixbackend.macinnovafrica.com/api/';
-const axiosInstance = axios.create({
-  baseURL: API_URL,
-});
-
-// Action pour créer un nouveau projet
+// Créer un projet
 export const createProject = createAsyncThunk(
   'projects/createProject',
-  async ({ projectData, token }, { rejectWithValue }) => {
+  async (projectData, { rejectWithValue }) => {
     try {
-      // The token is now passed directly as a parameter
       const response = await axiosInstance.post('projects', projectData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: error.message });
+    }
+  }
+);
+
+// Récupérer tous les projets
+export const fetchProjects = createAsyncThunk(
+  'projects/fetchProjects',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get('projects');
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: error.message });
+    }
+  }
+);
+
+// Accepter une proposition (admin)
+export const acceptProposal = createAsyncThunk(
+  'projects/acceptProposal',
+  async (projectId, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post(`projects/${projectId}/accept-proposal`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: error.message });
+    }
+  }
+);
+
+// Refuser et négocier (admin)
+export const refuseAndNegotiate = createAsyncThunk(
+  'projects/refuseAndNegotiate',
+  async (projectId, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post(`projects/${projectId}/negotiate`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: error.message });
+    }
+  }
+);
+
+
+
+export const signContract = createAsyncThunk(
+  'projects/signContract',
+  async (projectId, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      const config = {
         headers: {
           Authorization: `Bearer ${token}`,
-         
+        },
+      };
+      const response = await axios.put(API_URL + projectId + '/sign', null, config);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+// Action pour l'approbation du contrat par l'admin
+export const approveContract = createAsyncThunk(
+  'projects/approveContract',
+  async (projectId, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.put(API_URL + projectId + '/approve', null, config);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+
+
+export const submitPaymentProof = createAsyncThunk(
+  'projects/submitPaymentProof',
+  async ({ projectId, proof }, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      const response = await axios.put(`${API_URL}${projectId}/submit-proof`, proof, {
+        headers: {
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
       });
       return response.data;
     } catch (error) {
-      // It's a good practice to log the full error response to the console
-      // to see the validation errors from the backend.
-      console.error('Error creating project:', error.response.data);
-      return rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
 );
 
-// Action pour récupérer tous les projets
-export const fetchProjects = createAsyncThunk(
-  'projects/fetchProjects',
-  async (_, { rejectWithValue }) => {
+// Action pour vérifier le paiement (côté administrateur)
+export const verifyPayment = createAsyncThunk(
+  'projects/verifyPayment',
+  async (projectId, thunkAPI) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        return rejectWithValue({ message: 'Authentication token is missing.' });
-      }
-
-      const response = await axiosInstance.get('projects', {
+      const token = thunkAPI.getState().auth.user.token;
+      const response = await axios.put(`${API_URL}${projectId}/verify-payment`, null, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
 );
 
-// Action pour que l'admin accepte une proposition
-export const acceptProposal = createAsyncThunk(
-  'projects/acceptProposal',
-  async (projectId, { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axiosInstance.post(
-        `projects/${projectId}/accept-proposal`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
-// Action pour que l'admin refuse et entre en négociation
-export const refuseAndNegotiate = createAsyncThunk(
-  'projects/refuseAndNegotiate',
-  async (projectId, { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axiosInstance.post(
-        `projects/${projectId}/negotiate`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
-
-
-// Slice principal
+// --- Slice ---
 const projectsSlice = createSlice({
   name: 'projects',
   initialState: {
     projects: [],
     status: 'idle',
     error: null,
-    createProjectStatus: {
-      status: 'idle',
-      error: null,
-    },
+    createProjectStatus: { status: 'idle', error: null },
   },
   reducers: {
-    // Réinitialise l'état de la création de projet à sa valeur initiale
     resetCreateProjectStatus: (state) => {
-      // 💡 Correction ici : réinitialise l'objet entier, pas seulement une valeur
-      state.createProjectStatus = {
-        status: 'idle',
-        error: null,
-      };
+      state.createProjectStatus = { status: 'idle', error: null };
     },
   },
   extraReducers: (builder) => {
     builder
-      // Logique pour la création de projet
+      // Création projet
       .addCase(createProject.pending, (state) => {
-        state.createProjectStatus.status = 'loading'; // 💡 Accédez à la propriété status
+        state.createProjectStatus.status = 'loading';
       })
       .addCase(createProject.fulfilled, (state, action) => {
-        state.createProjectStatus.status = 'succeeded'; // 💡 Accédez à la propriété status
+        state.createProjectStatus.status = 'succeeded';
         state.projects.push(action.payload);
       })
       .addCase(createProject.rejected, (state, action) => {
-        state.createProjectStatus.status = 'failed'; // 💡 Accédez à la propriété status
-        state.createProjectStatus.error = action.payload || action.error.message; // 💡 Stockez l'erreur dans l'objet
+        state.createProjectStatus.status = 'failed';
+        state.createProjectStatus.error = action.payload || action.error.message;
       })
 
-      // Logique pour la récupération des projets
+      // Récupération projets
       .addCase(fetchProjects.pending, (state) => {
         state.status = 'loading';
         state.error = null;
@@ -152,33 +177,57 @@ const projectsSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload || action.error.message;
       })
-    
-      // Logique pour l'acceptation de proposition (admin)
+
+
+      .addCase(submitPaymentProof.fulfilled, (state, action) => {
+        const index = state.projects.findIndex(p => p.id === action.payload.id);
+        if (index !== -1) {
+          state.projects[index] = action.payload;
+        }
+      })
+      .addCase(verifyPayment.fulfilled, (state, action) => {
+        const index = state.projects.findIndex(p => p.id === action.payload.id);
+        if (index !== -1) {
+          state.projects[index] = action.payload;
+        }
+      })
+
+
+      .addCase(signContract.fulfilled, (state, action) => {
+        state.projects = action.payload; // Met à jour l'objet projet avec les données du serveur
+      })
+      .addCase(signContract.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+      .addCase(approveContract.fulfilled, (state, action) => {
+        state.projects = action.payload; // Met à jour l'objet projet avec les données du serveur
+      })
+      .addCase(approveContract.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+
+      // Accepter proposition
       .addCase(acceptProposal.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(acceptProposal.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        const index = state.projects.findIndex(project => project.id === action.payload.id);
-        if (index !== -1) {
-          state.projects[index] = action.payload; // Met à jour le projet dans le tableau
-        }
+        const index = state.projects.findIndex(p => p.id === action.payload.id);
+        if (index !== -1) state.projects[index] = action.payload;
       })
       .addCase(acceptProposal.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload || action.error.message;
       })
 
-      // Logique pour la négociation de proposition (admin)
+      // Refuser et négocier
       .addCase(refuseAndNegotiate.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(refuseAndNegotiate.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        const index = state.projects.findIndex(project => project.id === action.payload.id);
-        if (index !== -1) {
-          state.projects[index] = action.payload;
-        }
+        const index = state.projects.findIndex(p => p.id === action.payload.id);
+        if (index !== -1) state.projects[index] = action.payload;
       })
       .addCase(refuseAndNegotiate.rejected, (state, action) => {
         state.status = 'failed';

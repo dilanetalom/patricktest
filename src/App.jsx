@@ -4,31 +4,43 @@ import Portfolio from "./pages/Porfolio";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/AuthPage";
-import LayoutDashbord from "./pages/Dashbord/LayoutDashbord";
 import { Toaster } from "react-hot-toast";
-import PrivateRoute from "./components/PrivateRoute";
-// import { useDispatch } from 'react-redux';
-
 import { ToastContainer } from "react-toastify";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import PrivateRoute from "./components/PrivateRoute";
 import Pending from "./pages/Dashbord/Pending";
 import InProgress from "./pages/Dashbord/InProgress";
 import Completed from "./pages/Dashbord/Completed";
 import Profile from "./pages/Dashbord/Profile";
 import AllServices from "./pages/Dashbord/ServiceDashbord";
 import User from "./pages/Dashbord/gestion/User";
-import { useEffect, useState } from "react";
 import Notifications from "./pages/Dashbord/Notifications";
+import Bord from "./pages/Dashbord/Bord";
+
+import { getProfile } from "./store/authSlice";
+import AcceptedProjects from "./pages/Dashbord/AcceptedProjects";
+import ContractSignaturePage from "./pages/Dashbord/ContractSignaturePage";
+import Bords from "./pages/Dashbord/Bords";
+import PaymentPage from "./pages/Dashbord/PaymentPage";
 
 function App() {
-
-  const [user, setUser] = useState({})
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const users = JSON.parse(localStorage.getItem('user'));
-   if (users) {
-    setUser(users)
-   }
-  }, []);
+    dispatch(getProfile()).finally(() => setLoading(false));
+  }, [dispatch]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[400px]">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-gray-900"></div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -37,36 +49,33 @@ function App() {
       <Notifications />
       <Router>
         <Routes>
+          {/* Pages publiques */}
           <Route path="/" element={<Portfolio />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<Apropos />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
+          {/* Routes protégées pour tous les utilisateurs */}
           <Route element={<PrivateRoute />}>
-            {user.role === "admin" ?
-              <>
-                <Route path="/dashbord" element={<AllServices />} />
-                <Route path="/pending" element={<Pending />} />
-                <Route path="/in-progress" element={<InProgress />} />
-                <Route path="/completed" element={<Completed />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/user" element={<User />} />
-              </> :
-              <>
-                <Route path="/dashbord" element={<AllServices />} />
-                <Route path="/pending" element={<Pending />} />
-                <Route path="/in-progress" element={<InProgress />} />
-                <Route path="/completed" element={<Completed />} />
-                <Route path="/profile" element={<Profile />} />
-                {/* <Route path="/user" element={<User />} /> */}
-                </>
-
-            }
-
+            <Route path="/dashbord" element={<AllServices />} />
+            <Route path="/pending" element={<Pending />} />
+            <Route path="/in-progress" element={<InProgress />} />
+            <Route path="/completed" element={<Completed />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/contrat" element={<AcceptedProjects />} />
+            <Route path="/signe/:id" element={<ContractSignaturePage />} />
           </Route>
-
-
+          <Route path="*" element={<h1>Page not found</h1>} />
+          {/* Routes protégées uniquement pour les admins */}
+          <Route element={<PrivateRoute role="admin" />}>
+            <Route path="/user" element={<User />} />
+            <Route path="/bord" element={<Bord />} />
+          </Route>
+          <Route element={<PrivateRoute role="client" />}>
+          <Route path="/bords" element={<Bords />} />
+          <Route path="/paiment" element={<PaymentPage />} />
+          </Route>
         </Routes>
       </Router>
     </>

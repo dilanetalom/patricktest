@@ -7,10 +7,9 @@ import Pusher from 'pusher-js';
 
 // Import our chatSlice actions and thunks
 import { addMessage, fetchMessages } from '../../store/chatSlice';
+import { API_URL } from '../../store/url';
 
 
-// const API_URL = 'http://127.0.0.1:8000/api/';
-const API_URL = 'https://finixbackend.macinnovafrica.com/api/';
 
 const ChatBox = ({ projectId }) => {
     const dispatch = useDispatch();
@@ -19,7 +18,11 @@ const ChatBox = ({ projectId }) => {
     const messagesEndRef = useRef(null); // Ref to scroll to the bottom of the chat
 
     // Déplacez le hook useSelector en dehors de la boucle
-    const currentUserId = useSelector((state) => state.auth.user.id);
+    // const currentUserId = useSelector((state) => state.auth.user.id);
+    const { user } = useSelector(state => state.auth);
+    const currentUserId = user?.user.id;
+    // console.log(user);
+    
     let lastMessageDate = null;
 
     // Fetch conversation messages when the component mounts
@@ -42,7 +45,7 @@ const ChatBox = ({ projectId }) => {
                 authEndpoint: `${API_URL}broadcasting/auth`, // Needed for private channels
                 auth: {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
                     },
                 },
             });
@@ -72,7 +75,7 @@ const ChatBox = ({ projectId }) => {
     const handleSendMessage = async () => {
         if (newMessage.trim()) {
             try {
-                const token = localStorage.getItem('token');
+                const token = sessionStorage.getItem('token');
                 const response = await axios.post( // <-- Capturez la réponse
                     `${API_URL}projects/${projectId}/send-message`,
                     { content: newMessage },
@@ -102,7 +105,7 @@ const ChatBox = ({ projectId }) => {
         <div className="flex flex-col h-[70vh] bg-gray-100 rounded-lg shadow-md overflow-hidden">
 
 
-      <div className="flex-1 p-4 overflow-y-auto space-y-4">
+<div className="flex-1 p-4 overflow-y-auto space-y-4">
                 {status === 'loading' ? (
                     <div className="flex justify-center items-center h-full">
                         <p className="text-gray-500">Chargement des messages...</p>
@@ -115,17 +118,21 @@ const ChatBox = ({ projectId }) => {
                         </p>
                     </div>
                 ) : (
-                    messages.map((message, index) => {
-                        // Crée un objet Date à partir du timestamp du message
+                    messages.map((message) => {
                         const messageDate = new Date(message.created_at);
                         const messageDay = messageDate.toLocaleDateString();
-
                         const showDateSeparator = messageDay !== lastMessageDate;
                         lastMessageDate = messageDay;
                         
+                        // 🚀 Définition des classes conditionnelles
+                        const isSender = message.user_id === currentUserId;
+                        const messageWrapperClasses = isSender ? 'justify-end' : 'justify-start';
+                        const messageBubbleClasses = isSender 
+                            ? 'bg-blue-600 text-white rounded-br-none' 
+                            : 'bg-gray-200 text-gray-800 rounded-bl-none';
+
                         return (
                             <React.Fragment key={message.id}>
-                                {/* Affiche un séparateur de date si c'est un nouveau jour */}
                                 {showDateSeparator && (
                                     <div className="flex justify-center my-4">
                                         <span className="text-sm text-gray-500 bg-gray-200 px-3 py-1 rounded-full">
@@ -134,29 +141,17 @@ const ChatBox = ({ projectId }) => {
                                     </div>
                                 )}
 
-                                <div
-                                    className={`flex items-end gap-2 ${
-                                        message.user_id === currentUserId ? 'justify-end' : 'justify-start'
-                                    }`}
-                                >
-                                    <div
-                                        className={`flex flex-col max-w-sm px-4 py-2 rounded-xl shadow-md ${
-                                            message.user_id === currentUserId
-                                                ? 'bg-blue-600 text-white rounded-br-none'
-                                                : 'bg-gray-200 text-gray-800 rounded-bl-none'
-                                        }`}
-                                    >
-                                        {message.user_id !== currentUserId && (
+                                <div className={`flex items-end gap-2 ${messageWrapperClasses}`}>
+                                    <div className={`flex flex-col max-w-sm px-4 py-2 rounded-xl shadow-md ${messageBubbleClasses}`}>
+                                        {!isSender && (
                                             <span className="font-bold text-sm text-gray-600">
-                                                {message.user.firstName}
+                                                {message.user?.firstName} {/* 🚀 Utilisation du chaînage optionnel */}
                                             </span>
                                         )}
                                         <p className="text-sm">
                                             {message.content}
                                         </p>
                                     </div>
-
-                                    {/* Affiche l'heure du message */}
                                     <span className="text-xs text-gray-500">
                                         {messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </span>

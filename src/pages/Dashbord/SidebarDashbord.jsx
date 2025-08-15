@@ -5,48 +5,46 @@ import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../../store/authSlice';
 
 const Sidebar = ({ setActiveView, activeView }) => {
-  const navItems = [
-    { name: 'Tous les Services', view: '/dashbord' },
-    { name: 'En attente', view: '/pending' },
-    { name: 'En cours', view: '/in-progress' },
-    { name: 'Terminé', view: '/completed' },
-    { name: 'Paramètres du Profil', view: '/profile' },
-  ];
-  const navItem = [
-    // { name: 'Tous les Services', view: '/dashbord' },
-    { name: 'Nouveaux projets', view: '/pending' },
-    { name: 'Projets En cours', view: '/in-progress' },
-    { name: 'Projets Terminés', view: '/completed' },
-    { name: 'Gestion utilisateurs', view: '/user' },
-  ];
-
-
-
-  const [users, setUsers] = useState({})
-
-  useEffect(() => {
-    const userss = JSON.parse(localStorage.getItem('user'));
-    setUsers(userss)
-
-  }, []);
-
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  const { user, isSuccess, isError, message, isLoading  } = useSelector((state) => state.auth);
+  
+  // 🚀 Utilisez directement l'objet user du store Redux, qui peut être null
+  const { user, isSuccess, isError, message, isLoading } = useSelector((state) => state.auth);
 
-  // Fonction pour ouvrir le modal
-  const handleOpenModal = () => {
-    setShowModal(true);
-  };
+    if (!user) {
+        return null; 
+      }
+  // Définissez vos éléments de navigation en fonction du rôle
+  const navItemsClient = [
+    {id:1, name: 'Nouvelles commandes', view: '/dashbord' },
+    { id:2, name: 'En attente', view: '/pending' },
+    { id:3, name: 'Signature du contrat ', view: '/contrat' },
+    { id:4, name: 'Paiement ', view: '/paiment' },
+    { id:5, name: 'Projet débuter ', view: '/in-progress' },
+    { id:6, name: 'Terminé', view: '/completed' },
+    { id:7, name: 'Paramètres du Profil', view: '/profile' },
+  ];
 
-  // Fonction pour fermer le modal
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
+  const navItemsAdmin = [
+    // {id:1, name: 'Nouvelles commandes', view: '/dashbord' },
+    {id:2, name: 'En attente', view: '/pending' },
+    {id:3, name: 'Signature du contrat ', view: '/contrat' },
+    {id:4, name: 'Vérification du paiement ', view: '/pending' },
+    { id:5, name: 'Projet débuter ', view: '/in-progress' },
+    {id:6, name: 'Terminé', view: '/completed' },
+    // { id:7, name: 'Paramètres du Profil', view: '/profile' },
+    { id:7, name: 'Gestion utilisateurs', view: '/user' },
+  ];
 
-  // Fonction de déconnexion principale
+  const currentNavItems = user?.user?.role === 'client' ? navItemsClient : navItemsAdmin;
+
+  // Gestion du modal
+  const handleOpenModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+
+  // Déconnexion
   const handleLogout = () => {
     dispatch(logout());
     navigate('/');
@@ -54,31 +52,20 @@ const Sidebar = ({ setActiveView, activeView }) => {
   };
 
   useEffect(() => {
-    // Si la déconnexion est un succès, on affiche le toast et on redirige
-    if (!user && !isSuccess) {
-      toast.success('Vous avez été déconnecté avec succès.');
-      navigate('/');
-    }
-    
-    // Si la déconnexion a échoué côté serveur mais a réussi en local
-    if (isError) {
-      toast.error(message);
-      navigate('/');
-    }
-
-  }, [user, isSuccess, isError, message, navigate]);
+    if (isError) toast.error(message);
+  }, [isError, message]);
 
   return (
     <aside className="w-[19%] h-[100vh]  fixed bg-gray-900 text-gray-200 flex flex-col p-6 shadow-2xl">
-      <div className="text-3xl font-extrabold text-white mb-10 tracking-wide">
+      <Link to={user?.user?.role === 'client'?"/bords":"/bord"} className="text-3xl font-extrabold text-white mb-10 tracking-wide">
         Dashboard
-      </div>
+      </Link>
       <nav className="flex-grow">
         <ul className="space-y-4">
           {
           
-         users.role==="client"? navItems.map(item => (
-            <li key={item.view}>
+          currentNavItems.map(item => (
+            <li key={item.id}>
               <Link
               to={item.view}  
                 className={`flex items-center w-full text-left p-3 rounded-xl transition-all duration-300 transform
@@ -93,26 +80,8 @@ const Sidebar = ({ setActiveView, activeView }) => {
                 </span>
               </Link>
             </li>
-          )):navItem.map(item => (
-            <li key={item.view}>
-              <Link
-              to={item.view}  
-                className={`flex items-center w-full text-left p-3 rounded-xl transition-all duration-300 transform
-                  ${window.location.pathname === item.view
-                    ? 'bg-gray-700 text-white shadow-lg scale-105'
-                    : 'text-gray-400 hover:bg-gray-700 hover:text-white'
-                  }`}
-              >
-                {/* Icône optionnelle, à insérer ici */}
-                <span className="ml-3 text-lg font-medium">
-                  {item.name}
-                </span>
-              </Link>
-            </li>
-          )
-          
-          
-          )}
+          ))
+}
         </ul>
       </nav>
 
