@@ -59,7 +59,7 @@ const navigate = useNavigate();
     e.preventDefault();
 
     // Récupère le token depuis le localStorage
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
 
     if (!token) {
       toast.error("Vous devez être connecté pour soumettre un projet.");

@@ -23,7 +23,7 @@ const Sidebar = ({ setActiveView, activeView }) => {
     { id:3, name: 'Signature du contrat ', view: '/contrat' },
     { id:4, name: 'Paiement ', view: '/paiment' },
     { id:5, name: 'Projet débuter ', view: '/in-progress' },
-    { id:6, name: 'Terminé', view: '/completed' },
+    { id:6, name: 'Projets terminé', view: '/completed' },
     { id:7, name: 'Paramètres du Profil', view: '/profile' },
   ];
 
@@ -31,9 +31,9 @@ const Sidebar = ({ setActiveView, activeView }) => {
     // {id:1, name: 'Nouvelles commandes', view: '/dashbord' },
     {id:2, name: 'En attente', view: '/pending' },
     {id:3, name: 'Signature du contrat ', view: '/contrat' },
-    {id:4, name: 'Vérification du paiement ', view: '/pending' },
+    {id:4, name: 'Vérification du paiement ', view: '/paiment ' },
     { id:5, name: 'Projet débuter ', view: '/in-progress' },
-    {id:6, name: 'Terminé', view: '/completed' },
+    {id:6, name: 'Projets terminé', view: '/completed' },
     // { id:7, name: 'Paramètres du Profil', view: '/profile' },
     { id:7, name: 'Gestion utilisateurs', view: '/user' },
   ];

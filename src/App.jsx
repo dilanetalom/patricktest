@@ -64,7 +64,7 @@ function App() {
             <Route path="/completed" element={<Completed />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/contrat" element={<AcceptedProjects />} />
-            <Route path="/signe/:id" element={<ContractSignaturePage />} />
+            <Route path="/signe/:projectId" element={<ContractSignaturePage />} />
           </Route>
           <Route path="*" element={<h1>Page not found</h1>} />
           {/* Routes protégées uniquement pour les admins */}

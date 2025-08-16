@@ -32,6 +32,20 @@ export const fetchProjects = createAsyncThunk(
   }
 );
 
+
+
+export const fetchProjectById = createAsyncThunk(
+  'projects/fetchProjectById',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`projects/${id}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: error.message });
+    }
+  }
+);
+
 // Accepter une proposition (admin)
 export const acceptProposal = createAsyncThunk(
   'projects/acceptProposal',
@@ -178,6 +192,18 @@ const projectsSlice = createSlice({
         state.error = action.payload || action.error.message;
       })
 
+
+      .addCase(fetchProjectById.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchProjectById.fulfilled, (state, action) => {
+        state.project = action.payload; // un seul projet
+        state.status = "succeeded";
+      })
+      .addCase(fetchProjectById.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
 
       .addCase(submitPaymentProof.fulfilled, (state, action) => {
         const index = state.projects.findIndex(p => p.id === action.payload.id);

@@ -6,6 +6,7 @@ import LayoutDashbord from './LayoutDashbord';
 import ChatBox from './ChatBox';
 import Modal from './Modal';
 import { fetchProjects, acceptProposal, refuseAndNegotiate } from '../../store/projectsSlice';
+import ProjectDetailsModal from './ProjectDetailsModal';
 
 const Pending = () => {
     const dispatch = useDispatch();
@@ -30,7 +31,7 @@ const Pending = () => {
     const pendingProjects = Array.isArray(projects)
         ? projects.filter((project) =>
             (project.status === 'pending' || project.status === 'negotiation') &&
-            (isAdmin || project.user_id == user.user.id)
+            (isAdmin || project.user_id == user?.user?.id)
         )
         : [];
 
@@ -74,6 +75,21 @@ const Pending = () => {
             .catch((err) => {
                 console.error('Impossible de démarrer la négociation:', err);
             });
+    };
+
+
+
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [selectedProject, setSelectedProject] = useState(null);
+  
+    const handleOpenDetails = (project) => {
+      setSelectedProject(project);
+      setShowDetailsModal(true);
+    };
+  
+    const handleCloseDetails = () => {
+      setShowDetailsModal(false);
+      setSelectedProject(null);
     };
 
     const isLoading = status === 'loading';
@@ -153,38 +169,57 @@ const Pending = () => {
                                             )}
 
                                             {project.status === "negotiation" && (
-                                                <button
-                                                    onClick={() => {
-                                                        setSelectedProjectId(project.id);
-                                                        setIsChatModalOpen(true);
-                                                    }}
-                                                    className="flex-1 bg-green-400 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200"
-                                                >
-                                                    💬 Ouvrir le chat
-                                                </button>
+                                                <div className=' w-full grid grid-cols-2 gap-2'>
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedProjectId(project.id);
+                                                            setIsChatModalOpen(true);
+                                                        }}
+                                                        className=" bg-green-400 hover:bg-blue-600 text-white font-semibold py-2 px-3 rounded-lg transition-colors duration-200"
+                                                    >
+                                                        💬 Ouvrir le chat
+                                                    </button>
+
+                                                    <button
+                                                          onClick={() => handleOpenDetails(project)}
+                                                        className="text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-3 rounded-lg transition-colors duration-200  block"
+                                                    >
+                                                        🔍 Voir les détails
+                                                    </button>
+                                                </div>
                                             )}
                                         </>
                                     ) : (
                                         <>
                                             {project.status === "pending" && (
-                                                <Link
-                                                    to={`/projects/${project.id}`}
+                                                <button
+                                                onClick={() => handleOpenDetails(project)}
                                                     className="text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200 w-full block"
                                                 >
                                                     🔍 Voir les détails
-                                                </Link>
+                                                </button>
                                             )}
 
                                             {project.status === "negotiation" && (
-                                                <button
-                                                    onClick={() => {
-                                                        setSelectedProjectId(project.id);
-                                                        setIsChatModalOpen(true);
-                                                    }}
-                                                    className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200 w-full"
-                                                >
-                                                    💬 Ouvrir le chat
-                                                </button>
+                                                <div className=' w-full grid grid-cols-2 gap-2'>
+
+                                                    <button
+                                                        onClick={() => handleOpenDetails(project)}
+                                                        className="text-center bg-green-400 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200 w-full block"
+                                                    >
+                                                        🔍 Voir les détails
+                                                    </button>
+
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedProjectId(project.id);
+                                                            setIsChatModalOpen(true);
+                                                        }}
+                                                        className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200 w-full"
+                                                    >
+                                                        💬 Ouvrir le chat
+                                                    </button>
+                                                </div>
                                             )}
                                         </>
                                     )}
@@ -245,6 +280,8 @@ const Pending = () => {
                 <Modal isOpen={isChatModalOpen} onClose={() => setIsChatModalOpen(false)}>
                     <ChatBox projectId={selectedProjectId} />
                 </Modal>
+
+                {showDetailsModal && <ProjectDetailsModal project={selectedProject} onClose={handleCloseDetails} />}
             </div>
         </LayoutDashbord>
     );
