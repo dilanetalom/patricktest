@@ -11,7 +11,7 @@ const AcceptedProjects = () => {
   const { user } = useSelector((state) => state.auth);
 
   const acceptedProjects = Array.isArray(projects)
-    ? projects.filter(project => project.status === 'accepted')
+    ? projects.filter(project => project.status === 'accepted' && project.status === 'contract_signed')
     : [];
 
   useEffect(() => {
@@ -77,7 +77,7 @@ const AcceptedProjects = () => {
 
                 {/* Bouton */}
                 <div className="px-6 py-4 bg-gray-50">
-                  {canSign(project) ? (
+                  {   (user?.user?.role === 'client' && !project.client_signature) ? (
                     <Link
                       to={`/signe/${project.id}`}
                       className="block text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-colors duration-200 shadow-sm"
