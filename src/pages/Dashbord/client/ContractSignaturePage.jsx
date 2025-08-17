@@ -57,7 +57,7 @@ const ContractSignaturePage = () => {
         setTempSignature(null);
         // Redirection ou mise à jour si nécessaire
         dispatch(fetchProjectById(projectId));
-        navigate("/paiment") // Re-fetch pour actualiser l'état
+        // navigate("/paiment") 
       })
       .catch((err) => {
         toast.error('Erreur lors de la signature client.');
