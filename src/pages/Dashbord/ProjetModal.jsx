@@ -258,7 +258,7 @@ const navigate = useNavigate();
                   <span>Chargement...</span>
                 </div>
               ) : (
-                'Soumettre'
+                'SOUMETTRE VOTRE PROJET'
               )}
             </button>
           </div>

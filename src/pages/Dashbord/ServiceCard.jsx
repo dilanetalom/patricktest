@@ -15,11 +15,12 @@ const ServiceCard = ({ service, onClick }) => {
     </div>
   
     {/* Contenu */}
-    <div className="px-6 py-5 space-y-2">
+    <div className="px-6 py-5 space-y-2 flex flex-col gap-3">
       <p className="text-gray-600 group-hover:text-gray-800 transition-colors duration-200">
         Cliquez pour soumettre un projet de{" "}
         <span className="font-medium">{service.name.toLowerCase()}</span>.
       </p>
+      <button className='flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200'>Obtenir un devis gratuitement</button>
     </div>
   </div>
   );
