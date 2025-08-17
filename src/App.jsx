@@ -21,9 +21,11 @@ import Bord from "./pages/Dashbord/Bord";
 
 import { getProfile } from "./store/authSlice";
 import AcceptedProjects from "./pages/Dashbord/AcceptedProjects";
-import ContractSignaturePage from "./pages/Dashbord/ContractSignaturePage";
+import ContractSignaturePage from "./pages/Dashbord/client/ContractSignaturePage";
 import Bords from "./pages/Dashbord/Bords";
-import PaymentPage from "./pages/Dashbord/PaymentPage";
+import PaymentPage from "./pages/Dashbord/client/PaymentPage";
+import Commande from "./pages/Dashbord/admin/Commande";
+import AdminPaymentVerification from "./pages/Dashbord/admin/AdminPaymentVerification";
 
 function App() {
   const dispatch = useDispatch();
@@ -71,10 +73,13 @@ function App() {
           <Route element={<PrivateRoute role="admin" />}>
             <Route path="/user" element={<User />} />
             <Route path="/bord" element={<Bord />} />
+          <Route path="/verify" element={<AdminPaymentVerification/>} />
+
           </Route>
           <Route element={<PrivateRoute role="client" />}>
           <Route path="/bords" element={<Bords />} />
           <Route path="/paiment" element={<PaymentPage />} />
+          <Route path="/commande" element={<Commande/>} />
           </Route>
         </Routes>
       </Router>

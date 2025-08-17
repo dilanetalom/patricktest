@@ -4,9 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import SignatureCanvas from 'react-signature-canvas';
-import { fetchProjectById, signContract, approveContract } from '../../store/projectsSlice';
-import LayoutDashbord from './LayoutDashbord';
-import Modal from './Modal';
+import { fetchProjectById, signContract, approveContract } from '../../../store/projectsSlice';
+import LayoutDashbord from '../LayoutDashbord';
+import Modal from '../Modal';
+import { API_URL, API_URLS } from '../../../store/url';
 
 const ContractSignaturePage = () => {
   const { projectId } = useParams();
@@ -14,15 +15,12 @@ const ContractSignaturePage = () => {
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [signingRole, setSigningRole] = useState(null); // 'client' ou 'admin'
-  const [tempSignature, setTempSignature] = useState(null); // signature temporaire avant enregistrement
-
+  const [tempSignature, setTempSignature] = useState(null);
   const { project, status, error } = useSelector((state) => state.projects);
   const { user } = useSelector((state) => state.auth);
 
   const sigPad = useRef();
 
-  const isAdmin = user?.user?.role === 'admin';
   const isClient = user?.user?.role === 'client';
 
   useEffect(() => {
@@ -31,17 +29,16 @@ const ContractSignaturePage = () => {
     }
   }, [dispatch, projectId]);
 
-  const openSignatureModal = (role) => {
-    setSigningRole(role);
-    setTempSignature(null); // reset signature temporaire
+  const openSignatureModal = () => {
+    setTempSignature(null);
     setIsModalOpen(true);
   };
 
   const handleTempSignature = () => {
     if (!sigPad.current.isEmpty()) {
       const signature = sigPad.current.getCanvas().toDataURL('image/png');
-      setTempSignature(signature); // signature temporaire pour aperçu
-      setIsModalOpen(false); // ferme le modal pour voir sur le contrat
+      setTempSignature(signature);
+      setIsModalOpen(false);
     } else {
       toast.error("Veuillez signer avant de continuer.");
     }
@@ -53,23 +50,19 @@ const ContractSignaturePage = () => {
       return;
     }
 
-    if (signingRole === 'client') {
-      dispatch(signContract({ projectId, signature: tempSignature }))
-        .unwrap()
-        .then(() => {
-          toast.success('Signature client enregistrée !');
-          setTempSignature(null);
-        })
-        .catch(() => toast.error('Erreur lors de la signature client.'));
-    } else if (signingRole === 'admin') {
-      dispatch(approveContract({ projectId, signature: tempSignature }))
-        .unwrap()
-        .then(() => {
-          toast.success('Signature admin enregistrée !');
-          setTempSignature(null);
-        })
-        .catch(() => toast.error('Erreur lors de la signature admin.'));
-    }
+    dispatch(signContract({ projectId, signature: tempSignature }))
+      .unwrap()
+      .then(() => {
+        toast.success('Signature client enregistrée !');
+        setTempSignature(null);
+        // Redirection ou mise à jour si nécessaire
+        dispatch(fetchProjectById(projectId));
+        navigate("/paiment") // Re-fetch pour actualiser l'état
+      })
+      .catch((err) => {
+        toast.error('Erreur lors de la signature client.');
+        console.error('Erreur de signature:', err);
+      });
   };
 
   if (status === 'loading' || !project) {
@@ -105,9 +98,8 @@ const ContractSignaturePage = () => {
             project={project}
             openSignatureModal={openSignatureModal}
             tempSignature={tempSignature}
-            signingRole={signingRole}
             isClient={isClient}
-            isAdmin={isAdmin}
+            saveSignature={saveSignature}
           />
         </div>
       </div>
@@ -115,9 +107,7 @@ const ContractSignaturePage = () => {
       {/* Modal de signature */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <div className="p-6">
-          <h2 className="text-xl font-bold mb-4">
-            {signingRole === 'client' ? 'Signature Client' : 'Signature Admin'}
-          </h2>
+          <h2 className="text-xl font-bold mb-4">Signature Client</h2>
           <SignatureCanvas
             ref={sigPad}
             penColor="black"
@@ -137,20 +127,20 @@ const ContractSignaturePage = () => {
   );
 };
 
-const ContractContent = ({ project, openSignatureModal, tempSignature, signingRole, isClient, isAdmin }) => {
+const ContractContent = ({ project, openSignatureModal, tempSignature, isClient, saveSignature }) => {
   return (
     <div id="contract-content" className="bg-white p-8 rounded-lg max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold text-center mb-6">CONTRAT DE PRESTATION DE SERVICES</h1>
 
       <p className="mb-4">
-        Entre <strong>{project.user?.firstName} {project.user?.lastName}</strong>, ci-après dénommé 
-        <strong> « le Client »</strong>, et la société <strong>MPE Digital Solutions</strong>, ci-après dénommée 
+        Entre <strong>{project.user?.firstName} {project.user?.lastName}</strong>, ci-après dénommé
+        <strong> « le Client »</strong>, et la société <strong>MPE Digital Solutions</strong>, ci-après dénommée
         <strong> « le Prestataire »</strong>.
       </p>
 
       <h2 className="text-xl font-semibold mt-6 mb-2">Article 1 - Objet du contrat</h2>
       <p className="mb-4">
-        Le présent contrat a pour objet la réalisation d’une prestation portant sur 
+        Le présent contrat a pour objet la réalisation d’une prestation portant sur
         <strong> {project.service}</strong>.  <br />
         Nom du Projet : {project.name}. <br />
         Description : {project.description}.
@@ -158,14 +148,14 @@ const ContractContent = ({ project, openSignatureModal, tempSignature, signingRo
 
       <h2 className="text-xl font-semibold mt-6 mb-2">Article 2 - Obligations du Prestataire</h2>
       <p className="mb-4">
-        Le Prestataire s’engage à réaliser la prestation selon les règles de l’art :  
+        Le Prestataire s’engage à réaliser la prestation selon les règles de l’art :
         <br />- Objectifs : {project.objectives}
         <br />- Date limite : {new Date(project.deadline).toLocaleDateString()}
       </p>
 
       <h2 className="text-xl font-semibold mt-6 mb-2">Article 3 - Prix et modalités</h2>
       <p className="mb-4">
-        Prix global : <strong>{project.client_price} €</strong>.  
+        Prix global : <strong>{project.client_price} €</strong>.
         Paiement en deux étapes : 50% à la signature et 50% à la livraison.
       </p>
 
@@ -184,62 +174,51 @@ const ContractContent = ({ project, openSignatureModal, tempSignature, signingRo
         <div>
           <p className="font-semibold">Le Client</p>
           <p>{project.user?.firstName} {project.user?.lastName}</p>
-
-          {/* Aperçu temporaire */}
-          {tempSignature && signingRole === 'client' && (
-            <img src={tempSignature} alt="Signature Client" className="mx-auto mt-2 " />
+          {/* Affiche la signature existante ou l'aperçu temporaire */}
+          {project.client_signature && (
+            <img
+              src={`${API_URLS}${project.client_signature}`}
+              alt="Signature Client"
+              className="mx-auto mt-2 h-56 w-56"
+            />
+          )}
+          {tempSignature && (
+            <img src={tempSignature} alt="Aperçu Signature" className="mx-auto mt-2 h-56 w-56" />
           )}
 
-          {/* Bouton signer / resigner */}
+          {/* Bouton pour le client */}
           {!project.client_signature && isClient && (
-            <button
-              onClick={() => openSignatureModal('client')}
-              className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-            >
-              {tempSignature && signingRole === 'client' ? 'Resigner' : 'Je signe'}
-            </button>
+            <>
+              <button
+                onClick={openSignatureModal}
+                className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+              >
+                Je signe
+              </button>
+              {tempSignature && (
+                <button
+                  onClick={saveSignature} // Ajoutez la fonction saveSignature ici
+                  className="mt-2 bg-green-600 text-white px-6 py-2 ml-2 rounded-lg hover:bg-green-700"
+                >
+                  Soumettre Signature
+                </button>
+              )}
+            </>
           )}
-
-          {/* Bouton soumettre signature */}
-          {tempSignature && signingRole === 'client' && (
-            <button
-              onClick={() => saveSignature('client')}
-              className="mt-2 bg-green-600 text-white px-6 py-2 ml-2 rounded-lg hover:bg-green-700"
-            >
-              Soumettre Signature
-            </button>
-          )}
+          {/* Si déjà signé, un message */}
+          {project.client_signature && <p className="mt-4 text-green-600">✅ Signé le {new Date(project.client_signature_date).toLocaleDateString()}</p>}
         </div>
 
-        {/* Admin */}
+        {/* Prestataire */}
         <div>
           <p className="font-semibold">Le Prestataire</p>
           <p>MPE Digital Solutions</p>
-
-          {/* Aperçu temporaire */}
-          {tempSignature && signingRole === 'admin' && (
-            <img src={tempSignature} alt="Signature Admin" className="mx-auto mt-2 border h-56 w-56" />
+          {project.admin_signature && (
+            <img src={`${project.admin_signature}`} alt="Signature Admin" className="mx-auto mt-2 h-56 w-56" />
           )}
-
-          {/* Bouton signer / resigner */}
-          {!project.admin_signature && isAdmin && project.client_signature && (
-            <button
-              onClick={() => openSignatureModal('admin')}
-              className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-            >
-              {tempSignature && signingRole === 'admin' ? 'Resigner' : 'Je signe'}
-            </button>
-          )}
-
-          {/* Bouton soumettre signature */}
-          {tempSignature && signingRole === 'admin' && (
-            <button
-              onClick={() => saveSignature('admin')}
-              className="mt-2 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
-            >
-              Soumettre Signature
-            </button>
-          )}
+          {/* Affiche l'état pour l'admin */}
+          {!project.admin_signature && <p className="mt-4 text-gray-500">En attente de signature</p>}
+          {project.admin_signature && <p className="mt-4 text-green-600">✅ Signé le {new Date(project.admin_signature_date).toLocaleDateString()}</p>}
         </div>
       </div>
     </div>

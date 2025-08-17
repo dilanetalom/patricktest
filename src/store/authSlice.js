@@ -58,6 +58,40 @@ export const getAllUsers = createAsyncThunk('auth/getAllUsers', async (_, thunkA
   }
 });
 
+
+
+export const updateProfile = createAsyncThunk(
+  'auth/updateProfile',
+  async (userData, thunkAPI) => {
+    try {
+      const token = sessionStorage.getItem('token');
+      const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+
+      if (!token) throw new Error('Aucun token');
+      if (!user?.id) throw new Error('Utilisateur non trouvé en session');
+
+      const response = await axios.put(
+        `${API_URL}users/${user.id}`,   
+        userData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Sauvegarde du profil modifié en session
+      // sessionStorage.setItem('user', JSON.stringify(response.data));
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || 'Impossible de mettre à jour le profil'
+      );
+    }
+  }
+);
+
+
+
 // --- Initial State ---
 const storedToken = sessionStorage.getItem('token');
 const storedUser = sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')) : null;

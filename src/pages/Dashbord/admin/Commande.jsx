@@ -1,0 +1,228 @@
+// src/components/Commande.jsx
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import Modal from '../Modal';
+import { fetchProjects, acceptProposal, refuseAndNegotiate } from '../../../store/projectsSlice';
+import { usePagination } from './usePagination'; // Assurez-vous d'avoir ce hook
+import ProjectDetailsModal from '../ProjectDetailsModal';
+import LayoutDashbord from '../LayoutDashbord';
+import ChatBox from '../ChatBox';
+
+const Commande = () => {
+    const dispatch = useDispatch();
+    const { projects = [], status, error } = useSelector((state) => state.projects);
+    const { user } = useSelector((state) => state.auth);
+
+    const [isChatModalOpen, setIsChatModalOpen] = useState(false);
+    const [selectedProjectId, setSelectedProjectId] = useState(null);
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [selectedProject, setSelectedProject] = useState(null);
+
+    const isLoading = status === 'loading';
+
+    // Assurez-vous que l'utilisateur est chargé
+    if (!user) {
+        return (
+            <LayoutDashbord>
+                <div className="text-gray-700 text-lg">Chargement de l’utilisateur...</div>
+            </LayoutDashbord>
+        );
+    }
+
+    // Filtrer tous les projets en attente ou en négociation pour l'admin
+    const adminProjects = Array.isArray(projects)
+        ? projects.filter(project => project.status === 'pending' || project.status === 'negotiation')
+        : [];
+
+
+
+    // Utiliser un hook de pagination pour gérer l'état
+    const { currentItems, currentPage, totalPages, goToPage } = usePagination(adminProjects, 6);
+
+    useEffect(() => {
+        const token = sessionStorage.getItem('token');
+        if (token) {
+            dispatch(fetchProjects());
+        } else {
+            console.warn('Aucun token trouvé, impossible de récupérer les projets');
+        }
+    }, [dispatch]);
+
+    const handleAccept = (projectId) => {
+        dispatch(acceptProposal(projectId))
+            .unwrap()
+            .then(() => {
+                toast.success("Le projet a été accepté avec succès !");
+                dispatch(fetchProjects()); // Re-lancer la récupération des projets
+            })
+            .catch((error) => {
+                const errorMessage = error?.message || "Échec de l'acceptation du projet.";
+                toast.error(errorMessage);
+                console.error("Erreur lors de l'acceptation :", error);
+            });
+    };
+
+
+    const handleNegotiate = (projectId) => {
+        dispatch(refuseAndNegotiate(projectId))
+            .unwrap()
+            .then(() => {
+                setSelectedProjectId(projectId);
+                setIsChatModalOpen(true);
+            })
+            .catch((err) => {
+                console.error('Impossible de démarrer la négociation:', err);
+            });
+    };
+
+    const handleOpenChat = (projectId) => {
+        setSelectedProjectId(projectId);
+        setIsChatModalOpen(true);
+    };
+
+    const handleOpenDetails = (project) => {
+        setSelectedProject(project);
+        setShowDetailsModal(true);
+    };
+
+    const handleCloseDetails = () => {
+        setShowDetailsModal(false);
+        setSelectedProject(null);
+    };
+
+    return (
+        <LayoutDashbord>
+            <div>
+                <h2 className="text-4xl font-bold mb-10 text-gray-800">Projets en attente</h2>
+
+                {isLoading && (
+                    <div className="flex justify-center items-center h-[400px]">
+                        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-gray-900"></div>
+                    </div>
+                )}
+
+                {!isLoading && error && (
+                    <p className="text-red-500 mt-4">
+                        Erreur: {typeof error === 'string' ? error : error?.message || JSON.stringify(error)}
+                    </p>
+                )}
+
+                {!isLoading && adminProjects.length > 0 ? (
+                    <>
+                        <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            {currentItems.map((project) => (
+                                <div
+                                    key={project.id}
+                                    className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow duration-300"
+                                >
+                                    <div className="px-6 py-4 bg-blue-950 ">
+                                        <h3 className="text-lg sm:text-xl font-bold text-white">
+                                            {project.name}
+                                        </h3>
+
+                                    </div>
+                                    <div className="px-6 py-5 space-y-3">
+                                        <p className="text-gray-700"><span className="font-medium">Service :</span> {project.service}</p>
+                                        {project.client_price && (
+                                            <p className="text-gray-700"><span className="font-medium">Montant proposé :</span> {project.client_price} {project.device || "€"}</p>
+                                        )}
+                                        <p className="text-gray-700"><span className="font-medium">Date d'échéance :</span> {new Date(project.deadline).toLocaleDateString()}</p>
+                                        <p className="text-gray-700"><span className="font-medium">Soumis par :</span> {project.user?.firstName || "Inconnu"}</p>
+                                        <p className="text-gray-700"><span className="font-medium">Statut :</span> <span className="capitalize">{project.status.replace(/_/g, ' ') === "pending"?"En attente de votre validation":"En négociation pour trouvé un accord"}</span></p>
+                                    </div>
+                                    <div className="px-6 py-4 bg-gray-50 flex flex-col sm:flex-row gap-3">
+                                        {/* Cas 1: Statut "pending" */}
+                                        {project.status === "pending" && (
+                                            <>
+                                                <button
+                                                    onClick={() => handleAccept(project.id)}
+                                                    className="flex-1 bg-green-500 hover:bg-green-600  text-xs text-white font-semibold py-2 rounded-lg transition-colors duration-200"
+                                                >
+                                                    ✅ Accepter
+                                                </button>
+                                                <button
+                                                    onClick={() => handleNegotiate(project.id)}
+                                                    className=" text-xs flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200"
+                                                >
+                                                    🤝 Négocier
+                                                </button>
+                                                  <button
+                                                    onClick={() => handleOpenDetails(project)}
+                                                    className="flex-1 text-xs text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200"
+                                                >
+                                                    🔍 Voir les détails
+                                                </button>
+                                            </>
+                                        )}
+
+                                        {/* Cas 2: Statut "negotiation" */}
+                                        {project.status === "negotiation" && (
+                                            <div className='w-full flex flex-col sm:flex-row gap-2 text-xs'>
+                                                <button
+                                                    onClick={() => handleAccept(project.id)}
+                                                    className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200"
+                                                >
+                                                    ✅ Accepter
+                                                </button>
+                                                <button
+                                                    onClick={() => handleOpenChat(project.id)}
+                                                    className="flex-1 bg-green-400 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200"
+                                                >
+                                                    💬 Ouvrir le chat
+                                                </button>
+                                                <button
+                                                    onClick={() => handleOpenDetails(project)}
+                                                    className="flex-1 text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200"
+                                                >
+                                                    🔍 Voir les détails
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        {totalPages > 1 && (
+                            <div className="flex justify-center mt-6 gap-2">
+                                <button
+                                    onClick={() => goToPage(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className={`px-4 py-2 rounded-lg border ${currentPage === 1 ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-white hover:bg-gray-100"}`}
+                                >
+                                    ⬅ Précédent
+                                </button>
+                                {[...Array(totalPages)].map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => goToPage(index + 1)}
+                                        className={`px-4 py-2 rounded-lg border ${currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                                    >
+                                        {index + 1}
+                                    </button>
+                                ))}
+                                <button
+                                    onClick={() => goToPage(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className={`px-4 py-2 rounded-lg border ${currentPage === totalPages ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-white hover:bg-gray-100"}`}
+                                >
+                                    Suivant ➡
+                                </button>
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    !isLoading && adminProjects.length === 0 && (
+                        <p className="text-gray-500 mt-4">Aucun nouveau projet en attente.</p>
+                    )
+                )}
+
+                <Modal isOpen={isChatModalOpen} onClose={() => setIsChatModalOpen(false)}>
+                    <ChatBox projectId={selectedProjectId} />
+                </Modal>
+                {showDetailsModal && <ProjectDetailsModal project={selectedProject} onClose={handleCloseDetails} />}
+            </div>
+        </LayoutDashbord>
+    );
+};
+
+export default Commande;

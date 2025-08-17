@@ -1,6 +1,9 @@
 // src/features/projects/projectsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from './services/axiosInstance';
+import axios from 'axios';
+import { API_URL } from './url';
+
 
 // --- Thunks ---
 
@@ -76,21 +79,84 @@ export const refuseAndNegotiate = createAsyncThunk(
 
 export const signContract = createAsyncThunk(
   'projects/signContract',
-  async (projectId, thunkAPI) => {
+  async ({ projectId, signature }, { getState, rejectWithValue }) => {
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const response = await axios.put(API_URL + projectId + '/sign', null, config);
-      return response.data;
+      const token = sessionStorage.getItem('token');
+      const response = await axios.post(
+        `${API_URL}projects/${projectId}/sign-client`,
+        { signature },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // Retourne la réponse en cas de succès
+      return response.data.project;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.message);
+      // ✅ Correction ici : vérifiez l'existence de error.response
+      if (error.response) {
+        // Le serveur a répondu avec un code d'erreur HTTP
+        return rejectWithValue(error.response.data);
+      } else if (error.request) {
+        // La requête a été faite, mais aucune réponse n'a été reçue
+        return rejectWithValue({ message: 'Aucune réponse du serveur.' });
+      } else {
+        // Quelque chose s'est produit lors de la configuration de la requête
+        return rejectWithValue({ message: error.message });
+      }
     }
   }
 );
+
+
+export const submitPaymentProof = createAsyncThunk(
+  'projects/submitPaymentProof',
+  async ({ projectId, proof }, { getState, rejectWithValue }) => {
+    try {
+      const token = sessionStorage.getItem('token');
+      const response = await axios.post(
+        `${API_URL}projects/${projectId}/submit-proof`,
+        proof, // "proof" est déjà un FormData
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      // Retourne le projet mis à jour
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+// Thunk pour la validation du paiement par l'admin
+export const verifyPayment = createAsyncThunk(
+  'projects/verifyPayment',
+  async (paymentId, { getState, rejectWithValue }) => {
+    try {
+      const token = sessionStorage.getItem('token');
+      const response = await axios.post(
+        `${API_URL}payments/${paymentId}/verify`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+      // Retourne le paiement mis à jour
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+
 
 // Action pour l'approbation du contrat par l'admin
 export const approveContract = createAsyncThunk(
@@ -113,41 +179,7 @@ export const approveContract = createAsyncThunk(
 
 
 
-export const submitPaymentProof = createAsyncThunk(
-  'projects/submitPaymentProof',
-  async ({ projectId, proof }, thunkAPI) => {
-    try {
-      const token = thunkAPI.getState().auth.user.token;
-      const response = await axios.put(`${API_URL}${projectId}/submit-proof`, proof, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.message);
-    }
-  }
-);
 
-// Action pour vérifier le paiement (côté administrateur)
-export const verifyPayment = createAsyncThunk(
-  'projects/verifyPayment',
-  async (projectId, thunkAPI) => {
-    try {
-      const token = thunkAPI.getState().auth.user.token;
-      const response = await axios.put(`${API_URL}${projectId}/verify-payment`, null, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.message);
-    }
-  }
-);
 
 // --- Slice ---
 const projectsSlice = createSlice({
@@ -178,6 +210,23 @@ const projectsSlice = createSlice({
         state.createProjectStatus.error = action.payload || action.error.message;
       })
 
+
+        .addCase(submitPaymentProof.fulfilled, (state, action) => {
+        const updatedProject = action.payload;
+        const index = state.projects.findIndex(p => p.id === updatedProject.id);
+        if (index !== -1) {
+          state.projects[index] = updatedProject;
+        }
+      })
+      .addCase(verifyPayment.fulfilled, (state, action) => {
+        const { project } = action.payload;
+        const index = state.projects.findIndex(p => p.id === project.id);
+        if (index !== -1) {
+          state.projects[index] = project;
+        }
+      })
+  
+
       // Récupération projets
       .addCase(fetchProjects.pending, (state) => {
         state.status = 'loading';
@@ -205,18 +254,7 @@ const projectsSlice = createSlice({
         state.error = action.payload;
       })
 
-      .addCase(submitPaymentProof.fulfilled, (state, action) => {
-        const index = state.projects.findIndex(p => p.id === action.payload.id);
-        if (index !== -1) {
-          state.projects[index] = action.payload;
-        }
-      })
-      .addCase(verifyPayment.fulfilled, (state, action) => {
-        const index = state.projects.findIndex(p => p.id === action.payload.id);
-        if (index !== -1) {
-          state.projects[index] = action.payload;
-        }
-      })
+
 
 
       .addCase(signContract.fulfilled, (state, action) => {

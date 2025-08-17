@@ -18,24 +18,7 @@ const NavDash = () => {
     // if (storedToken) {
     //   setToken(storedToken);
     // }
-  }, []); // Le tableau de dépendances vide garantit qu'il ne s'exécute qu'au montage
-
-  // Deuxième useEffect pour surveiller les changements de 'user'
-  useEffect(() => {
-    // Ce console.log s'exécutera après que l'état 'user' a été mis à jour
-    console.log("Valeur de l'utilisateur après mise à jour :", user);
-
-    if (!user) {
-        // Redirection ou autre action si l'utilisateur n'est pas connecté
-        // ...
-    }
-    
-  }, [user]); // Le hook s'exécute à chaque fois que 'user' change
-
-  if (!user) {
-    return <p>Aucun utilisateur connecté.</p>;
-  }
-
+  }, []); 
 
 
 

@@ -1,11 +1,37 @@
 // src/components/Dashboard.tsx
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from 'react-redux';
 import { FaFileSignature, FaMoneyBill, FaCheckCircle, FaTasks, FaHandshake } from "react-icons/fa";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import LayoutDashbord from "./LayoutDashbord";
-
+import WelcomeModal from "./client/WelcomeModal";
 
 const Bords = () => {
+    const { user } = useSelector(state => state.auth);
+    const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
+
+      
+
+    useEffect(() => {
+        // Condition pour s'assurer que l'objet utilisateur est bien chargé
+        if (user && user.user && user.role === 'client') {
+            // Utiliser une clé spécifique à l'utilisateur pour le stockage de session
+            const hasVisitedBefore = sessionStorage.getItem(`welcomeModal-${user.user.id}`);
+            
+            if (!hasVisitedBefore) {
+                setIsWelcomeModalOpen(true);
+            }
+        }
+    }, [user]); // Le useEffect se déclenche à chaque fois que 'user' change
+
+    const handleCloseWelcomeModal = () => {
+        setIsWelcomeModalOpen(false);
+        // Marque le modal comme affiché pour cette session en utilisant l'ID de l'utilisateur
+        if (user && user.user) {
+            sessionStorage.setItem(`welcomeModal-${user.user.id}`, 'true');
+        }
+    };
+
     // Données simulées (tu pourras les récupérer via API ensuite)
     const steps = [
         {
@@ -24,7 +50,6 @@ const Bords = () => {
             icon: <FaFileSignature size={28} />,
             description: "Contrats en cours de modification et signature"
         },
-   
         {
             id: 3,
             title: "Validation paiement",
@@ -77,6 +102,12 @@ const Bords = () => {
                     ))}
                 </div>
             </div>
+
+            {/* Le modal de bienvenue ne s'affiche que si l'état est vrai */}
+            <WelcomeModal
+                isOpen={isWelcomeModalOpen}
+                onClose={handleCloseWelcomeModal}
+            />
         </LayoutDashbord>
     );
 };

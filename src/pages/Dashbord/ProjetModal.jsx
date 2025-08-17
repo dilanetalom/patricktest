@@ -106,6 +106,12 @@ const navigate = useNavigate();
               <label className="block text-gray-700 mb-2" htmlFor="webFeatures">Fonctionnalités spécifiques</label>
               <textarea name="webFeatures" onChange={handleSpecificChange} className="w-full p-2 border border-gray-300 rounded-md" rows="2" placeholder="Ex: Paiement en ligne, espace membre, etc."></textarea>
             </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-2" htmlFor="companyName">Proposer un exemple </label>
+              <input type="text" name="liensite" 
+              placeholder="Entrer le lien d'un site qui vous inspire"
+              onChange={handleSpecificChange} className="w-full p-2 border border-gray-300 rounded-md" />
+            </div>
           </>
         );
       case "Création d'entreprise":
@@ -210,6 +216,7 @@ const navigate = useNavigate();
                 onChange={(e) => setCurrency(e.target.value)}
               >
                
+                <option value="">Choisir une dévise</option>
                 <option value="USD">USD (Dollar américain)</option>
                 <option value="XOF">FCFA (XOF)</option>
                 <option value="XAF">FCFA (XAF)</option>
@@ -225,6 +232,7 @@ const navigate = useNavigate();
                 type="number"
                 id="priceRange"
                 value={clientPrice}
+                placeholder='votre budget'
                 onChange={(e) => setClientPrice(e.target.value)}
                 className="flex-1 p-2 border border-gray-300 rounded-md"
                 required
