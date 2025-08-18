@@ -12,8 +12,8 @@ const PaymentPage = () => {
     const { projects, status, error } = useSelector(state => state.projects);
     const { user } = useSelector(state => state.auth);
 
-    const isAdmin = user?.user.role === 'admin';
-    const isClient = user?.user.role === 'client';
+    const isAdmin = user?.user?.role === 'admin';
+    const isClient = user?.user?.role === 'client';
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProjectId, setSelectedProjectId] = useState(null);
@@ -25,7 +25,7 @@ const PaymentPage = () => {
     }, [dispatch, status]);
 
     const filteredProjects = projects.filter(project => {
-        return project.status === 'contract_signed';
+        return project.status === 'contract_signed' || project.status === 'payment_submitted';
     });
 
     const handleOpenModal = (projectId) => {
@@ -88,9 +88,9 @@ const PaymentPage = () => {
 
     return (
         <LayoutDashbord>
-            <div className="p-8">
+            <div className="p-8  bg-gray-50">
                 <h2 className="text-3xl font-bold mb-6 text-gray-800">
-                    {isAdmin ? "Vérification des paiements" : "Paiements en attente"}
+                    {isAdmin ? "Vérification des paiements" : "Soumettre les preuves de paiment"}
                 </h2>
 
                 {filteredProjects.length > 0 ? (
@@ -98,6 +98,7 @@ const PaymentPage = () => {
                         {filteredProjects.map(project => (
                             <div key={project.id} className="bg-white p-6 rounded-lg shadow-md border-l-4 border-yellow-500">
                                 <h3 className="text-xl font-semibold mb-2">{project.name}</h3>
+                                <p className="text-md  mb-2">Date de signature de contrat : {project.client_signature_date}</p>
 
                                 {isAdmin && (
                                     <p className="text-gray-700 mb-2">
@@ -107,19 +108,27 @@ const PaymentPage = () => {
 
                                 {/* Boutons pour le client */}
                                 {isClient && (
-                                    <div className="flex flex-col gap-2 mt-4">
+                                    <div className="flex flex-col  mt-4 gap-3 ">
                                         <button
                                             onClick={() => handleDownloadPaymentInfo(project.id)}
-                                            className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition"
+                                            className="bg-purple-600 text-white px-4 py-3  rounded-lg hover:bg-purple-700 transition"
                                         >
                                             Télécharger les infos de paiement
                                         </button>
                                         {!project.paymentProof && (
                                             <button
                                                 onClick={() => handleOpenModal(project.id)}
-                                                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                                                className="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition"
                                             >
-                                                Soumettre preuve de paiement
+                                               {project.status === 'payment_submitted'?"Modifier la preuve de paiement ": "Soumettre preuve de paiement"} 
+                                            </button>
+                                        )}
+                                        {project.status === 'payment_submitted' && (
+                                            <button
+                                                onClick={() => handleOpenModal(project.id)}
+                                                className="bg-green-600 text-white px-4 py-3  w-full rounded-lg hover:bg-blue-700 transition"
+                                            >
+                                                Voir les details
                                             </button>
                                         )}
                                         {project.paymentProof && (

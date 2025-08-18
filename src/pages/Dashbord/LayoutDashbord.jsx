@@ -12,6 +12,7 @@ import InProgress from './InProgress';
 import User from './gestion/User';
 import ProgressBar from './client/ProgressBar';
 import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 
 function LayoutDashbord({ children }) {
   const [activeView, setActiveView] = useState('all-services');
@@ -26,18 +27,31 @@ function LayoutDashbord({ children }) {
     setUserRole(role || 'client');
   }, []);
 
-  const { user} = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
-  if (!user) {
-      return null; 
-  }
+  if (!user) {
+    return null;
+  }
+  const stepsRoutes = {
+    '/dashbord': 1,
+    '/pending': 2,
+    '/contrat': 3,
+    '/paiment': 4,
+    '/in-progress': 5,
+    '/completed': 6,
+  };
+  //   const currentProjectStatus = user?.user?.projectStatus || 1; 
 
-  // 🚀 Récupérez le statut actuel du projet du client
-  // C'est un exemple. En réalité, cette donnée devrait venir de votre backend via Redux ou un hook
-  const currentProjectStatus = user?.user?.projectStatus || 1; // Par défaut à 1 si non défini
 
+  const location = useLocation();
+  const [currentStep, setCurrentStep] = useState(1);
 
-
+  useEffect(() => {
+    // Mettez à jour l'étape en fonction de la route actuelle
+    const path = location.pathname;
+    const newStep = stepsRoutes[path] || 1; // Si la route n'est pas trouvée, par défaut à 1
+    setCurrentStep(newStep);
+  }, [location]);
 
 
 
@@ -50,7 +64,9 @@ function LayoutDashbord({ children }) {
         <NavDash />
         <main className='flex-1 p-8 overflow-y-auto'>
           {user?.user?.role === 'client' && (
-            <ProgressBar currentStep={currentProjectStatus} />
+            <div className='w-full '>
+              <ProgressBar currentStep={currentStep} />
+            </div>
           )}
           {children}
         </main>

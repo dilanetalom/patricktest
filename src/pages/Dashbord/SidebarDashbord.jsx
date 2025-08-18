@@ -18,7 +18,7 @@ const Sidebar = ({ setActiveView, activeView }) => {
       }
   // Définissez vos éléments de navigation en fonction du rôle
   const navItemsClient = [
-    {id:1, name: 'Nouvelle(s) commande(s)', view: '/dashbord' },
+    {id:1, name: 'Nouvelle commande', view: '/dashbord' },
     { id:2, name: 'Commande en attente de validation', view: '/pending' },
     { id:3, name: 'Signature du contrat ', view: '/contrat' },
     { id:4, name: 'Paiement ', view: '/paiment' },
@@ -38,7 +38,7 @@ const Sidebar = ({ setActiveView, activeView }) => {
     { id:6, name: 'Gestion utilisateurs', view: '/user' },
   ];
 
-  const currentNavItems = user?.user?.role === 'client' ? navItemsClient : navItemsAdmin;
+  const currentNavItems = user?.role === 'client' ? navItemsClient : navItemsAdmin;
 
   // Gestion du modal
   const handleOpenModal = () => setShowModal(true);

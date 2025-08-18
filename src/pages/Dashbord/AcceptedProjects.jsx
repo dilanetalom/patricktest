@@ -9,10 +9,13 @@ const AcceptedProjects = () => {
   const dispatch = useDispatch();
   const { projects, status, error } = useSelector((state) => state.projects);
   const { user } = useSelector((state) => state.auth);
-
+  
+  
   const acceptedProjects = Array.isArray(projects)
-    ? projects.filter(project => project.status === 'accepted' && project.status === 'contract_signed')
+    ? projects.filter(project => project.status === 'accepted' || project.status === 'contract_signed')
     : [];
+
+    console.log(acceptedProjects);
 
   useEffect(() => {
     if (status === 'idle') {
@@ -40,7 +43,7 @@ const AcceptedProjects = () => {
 
   return (
     <LayoutDashbord>
-      <div className="p-8">
+      <div className="p-8 bg-gray-50">
         <h2 className="text-3xl font-bold mb-6 text-gray-800">Projets acceptés (prêts à signer)</h2>
 
         {status === 'loading' && <p>Chargement des projets...</p>}

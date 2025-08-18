@@ -8,6 +8,7 @@ import { fetchProjectById, signContract, approveContract } from '../../../store/
 import LayoutDashbord from '../LayoutDashbord';
 import Modal from '../Modal';
 import { API_URL, API_URLS } from '../../../store/url';
+import sign from "../../../images/sign.png"
 
 const ContractSignaturePage = () => {
   const { projectId } = useParams();
@@ -57,7 +58,7 @@ const ContractSignaturePage = () => {
         setTempSignature(null);
         // Redirection ou mise à jour si nécessaire
         dispatch(fetchProjectById(projectId));
-        // navigate("/paiment") 
+        navigate("/paiment") 
       })
       .catch((err) => {
         toast.error('Erreur lors de la signature client.');
@@ -213,12 +214,12 @@ const ContractContent = ({ project, openSignatureModal, tempSignature, isClient,
         <div>
           <p className="font-semibold">Le Prestataire</p>
           <p>MPE Digital Solutions</p>
-          {project.admin_signature && (
-            <img src={`${project.admin_signature}`} alt="Signature Admin" className="mx-auto mt-2 h-56 w-56" />
-          )}
-          {/* Affiche l'état pour l'admin */}
-          {!project.admin_signature && <p className="mt-4 text-gray-500">En attente de signature</p>}
-          {project.admin_signature && <p className="mt-4 text-green-600">✅ Signé le {new Date(project.admin_signature_date).toLocaleDateString()}</p>}
+          {/* {project.admin_signature && ( */}
+            <img src={sign} alt="Signature Admin" className="mx-auto mt-2 h-56 w-56" />
+          {/* )} */}
+        
+          {/* {!project.admin_signature && <p className="mt-4 text-gray-500">En attente de signature</p>}
+          {project.admin_signature && <p className="mt-4 text-green-600">✅ Signé le {new Date(project.admin_signature_date).toLocaleDateString()}</p>} */}
         </div>
       </div>
     </div>

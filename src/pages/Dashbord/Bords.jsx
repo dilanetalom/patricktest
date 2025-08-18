@@ -1,5 +1,5 @@
 // src/components/Dashboard.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from 'react-redux';
 import { FaFileSignature, FaMoneyBill, FaCheckCircle, FaTasks, FaHandshake } from "react-icons/fa";
 import { MdOutlineShoppingCart } from "react-icons/md";
@@ -9,29 +9,28 @@ import WelcomeModal from "./client/WelcomeModal";
 const Bords = () => {
     const { user } = useSelector(state => state.auth);
     const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
+  const hasCheckedWelcome = useRef(false); // évite de rerun plusieurs fois
 
-      
+  useEffect(() => {
+    if (!user || !user.user) return; // attend que l'user soit défini
+    if (hasCheckedWelcome.current) return; // déjà vérifié pour cette connexion
 
-    useEffect(() => {
-        // Condition pour s'assurer que l'objet utilisateur est bien chargé
-        if (user && user.user && user.role === 'client') {
-            // Utiliser une clé spécifique à l'utilisateur pour le stockage de session
-            const hasVisitedBefore = sessionStorage.getItem(`welcomeModal-${user.user.id}`);
-            
-            if (!hasVisitedBefore) {
-                setIsWelcomeModalOpen(true);
-            }
-        }
-    }, [user]); // Le useEffect se déclenche à chaque fois que 'user' change
+    hasCheckedWelcome.current = true; // lock la vérification
 
-    const handleCloseWelcomeModal = () => {
-        setIsWelcomeModalOpen(false);
-        // Marque le modal comme affiché pour cette session en utilisant l'ID de l'utilisateur
-        if (user && user.user) {
-            sessionStorage.setItem(`welcomeModal-${user.user.id}`, 'true');
-        }
-    };
+    if (user?.role === "client") {
+      const hasVisitedBefore = localStorage.getItem(`welcomeModal-${user.user.id}`);
+      if (!hasVisitedBefore) {
+        setIsWelcomeModalOpen(true);
+      }
+    }
+  }, [user]);
 
+  const handleCloseWelcomeModal = () => {
+    setIsWelcomeModalOpen(false);
+    if (user && user.user) {
+      localStorage.setItem(`welcomeModal-${user?.id}`, "true");
+    }
+  };
     // Données simulées (tu pourras les récupérer via API ensuite)
     const steps = [
         {
@@ -104,10 +103,7 @@ const Bords = () => {
             </div>
 
             {/* Le modal de bienvenue ne s'affiche que si l'état est vrai */}
-            <WelcomeModal
-                isOpen={isWelcomeModalOpen}
-                onClose={handleCloseWelcomeModal}
-            />
+            <WelcomeModal isOpen={isWelcomeModalOpen} onClose={handleCloseWelcomeModal} />
         </LayoutDashbord>
     );
 };

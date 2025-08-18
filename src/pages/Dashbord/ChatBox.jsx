@@ -20,7 +20,7 @@ const ChatBox = ({ projectId }) => {
     // Déplacez le hook useSelector en dehors de la boucle
     // const currentUserId = useSelector((state) => state.auth.user.id);
     const { user } = useSelector(state => state.auth);
-    const currentUserId = user?.user.id;
+    const currentUserId = user?.user?.id;
     // console.log(user);
     
     let lastMessageDate = null;

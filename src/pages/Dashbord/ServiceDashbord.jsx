@@ -31,7 +31,7 @@ const AllServices = ( ) => {
    <LayoutDashbord>
    {isModalOpen && <ProjectModal service={selectedService}  onClose={() => setIsModalOpen(false)} onSubmit={addProject} />}
 
-   <div >
+   <div className='p-6 bg-gray-50' >
       <h2 className="text-3xl  mb-6 text-gray-800">Tous les services</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {services.map(service => (

@@ -1,9 +1,10 @@
 // src/components/Commande.jsx
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import Modal from '../Modal';
 import { fetchProjects, acceptProposal, refuseAndNegotiate } from '../../../store/projectsSlice';
-import { usePagination } from './usePagination'; // Assurez-vous d'avoir ce hook
+import { usePagination } from './usePagination';
 import ProjectDetailsModal from '../ProjectDetailsModal';
 import LayoutDashbord from '../LayoutDashbord';
 import ChatBox from '../ChatBox';
@@ -17,10 +18,12 @@ const Commande = () => {
     const [selectedProjectId, setSelectedProjectId] = useState(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedProject, setSelectedProject] = useState(null);
+    // New state for the confirmation modal
+    const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
 
     const isLoading = status === 'loading';
 
-    // Assurez-vous que l'utilisateur est chargé
+    // Ensure the user is loaded
     if (!user) {
         return (
             <LayoutDashbord>
@@ -29,14 +32,10 @@ const Commande = () => {
         );
     }
 
-    // Filtrer tous les projets en attente ou en négociation pour l'admin
     const adminProjects = Array.isArray(projects)
         ? projects.filter(project => project.status === 'pending' || project.status === 'negotiation')
         : [];
 
-
-
-    // Utiliser un hook de pagination pour gérer l'état
     const { currentItems, currentPage, totalPages, goToPage } = usePagination(adminProjects, 6);
 
     useEffect(() => {
@@ -48,20 +47,28 @@ const Commande = () => {
         }
     }, [dispatch]);
 
-    const handleAccept = (projectId) => {
+    // This function will now be called from the confirmation modal's "Confirmer" button
+    const handleConfirmAccept = (projectId) => {
         dispatch(acceptProposal(projectId))
             .unwrap()
             .then(() => {
                 toast.success("Le projet a été accepté avec succès !");
-                dispatch(fetchProjects()); // Re-lancer la récupération des projets
+                // Delay the data refresh to ensure the toast is visible
+                setTimeout(() => {
+                    dispatch(fetchProjects());
+                }, 2000);
             })
             .catch((error) => {
                 const errorMessage = error?.message || "Échec de l'acceptation du projet.";
                 toast.error(errorMessage);
                 console.error("Erreur lors de l'acceptation :", error);
+            })
+            .finally(() => {
+                // Close the modal and reset state after the action
+                setIsAcceptModalOpen(false);
+                setSelectedProjectId(null);
             });
     };
-
 
     const handleNegotiate = (projectId) => {
         dispatch(refuseAndNegotiate(projectId))
@@ -88,6 +95,12 @@ const Commande = () => {
     const handleCloseDetails = () => {
         setShowDetailsModal(false);
         setSelectedProject(null);
+    };
+
+    // This function now opens the confirmation modal
+    const handleOpenAcceptModal = (projectId) => {
+        setSelectedProjectId(projectId);
+        setIsAcceptModalOpen(true);
     };
 
     return (
@@ -119,7 +132,6 @@ const Commande = () => {
                                         <h3 className="text-lg sm:text-xl font-bold text-white">
                                             {project.name}
                                         </h3>
-
                                     </div>
                                     <div className="px-6 py-5 space-y-3">
                                         <p className="text-gray-700"><span className="font-medium">Service :</span> {project.service}</p>
@@ -131,22 +143,22 @@ const Commande = () => {
                                         <p className="text-gray-700"><span className="font-medium">Statut :</span> <span className="capitalize">{project.status.replace(/_/g, ' ') === "pending"?"En attente de votre validation":"En négociation pour trouvé un accord"}</span></p>
                                     </div>
                                     <div className="px-6 py-4 bg-gray-50 flex flex-col sm:flex-row gap-3">
-                                        {/* Cas 1: Statut "pending" */}
+                                        {/* Case 1: "pending" status */}
                                         {project.status === "pending" && (
                                             <>
                                                 <button
-                                                    onClick={() => handleAccept(project.id)}
-                                                    className="flex-1 bg-green-500 hover:bg-green-600  text-xs text-white font-semibold py-2 rounded-lg transition-colors duration-200"
+                                                    onClick={() => handleOpenAcceptModal(project.id)}
+                                                    className="flex-1 bg-green-500 hover:bg-green-600 text-xs text-white font-semibold py-2 rounded-lg transition-colors duration-200"
                                                 >
                                                     ✅ Accepter
                                                 </button>
                                                 <button
                                                     onClick={() => handleNegotiate(project.id)}
-                                                    className=" text-xs flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200"
+                                                    className="text-xs flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200"
                                                 >
                                                     🤝 Négocier
                                                 </button>
-                                                  <button
+                                                <button
                                                     onClick={() => handleOpenDetails(project)}
                                                     className="flex-1 text-xs text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200"
                                                 >
@@ -155,11 +167,11 @@ const Commande = () => {
                                             </>
                                         )}
 
-                                        {/* Cas 2: Statut "negotiation" */}
+                                        {/* Case 2: "negotiation" status */}
                                         {project.status === "negotiation" && (
                                             <div className='w-full flex flex-col sm:flex-row gap-2 text-xs'>
                                                 <button
-                                                    onClick={() => handleAccept(project.id)}
+                                                    onClick={() => handleOpenAcceptModal(project.id)}
                                                     className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200"
                                                 >
                                                     ✅ Accepter
@@ -220,9 +232,33 @@ const Commande = () => {
                     <ChatBox projectId={selectedProjectId} />
                 </Modal>
                 {showDetailsModal && <ProjectDetailsModal project={selectedProject} onClose={handleCloseDetails} />}
+
+                {/* The new Confirmation Modal */}
+                <Modal isOpen={isAcceptModalOpen} onClose={() => setIsAcceptModalOpen(false)}>
+                    <div className="p-6 bg-white rounded-lg shadow-xl text-center">
+                        <h3 className="text-xl font-semibold text-gray-800 mb-4">Confirmer l'acceptation</h3>
+                        <p className="text-gray-600 mb-6">
+                            Voulez-vous vraiment accepter ce projet ? Cette action est irréversible.
+                        </p>
+                        <div className="flex justify-center space-x-4">
+                            <button
+                                onClick={() => setIsAcceptModalOpen(false)}
+                                className="px-6 py-2 border rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
+                            >
+                                Annuler
+                            </button>
+                            <button
+                                onClick={() => handleConfirmAccept(selectedProjectId)}
+                                className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                            >
+                                Confirmer
+                            </button>
+                        </div>
+                    </div>
+                </Modal>
             </div>
         </LayoutDashbord>
     );
 };
 
-export default Commande;
+export default Commande;    

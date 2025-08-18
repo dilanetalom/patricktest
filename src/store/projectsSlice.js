@@ -113,6 +113,8 @@ export const signContract = createAsyncThunk(
 export const submitPaymentProof = createAsyncThunk(
   'projects/submitPaymentProof',
   async ({ projectId, proof }, { getState, rejectWithValue }) => {
+    console.log(projectId);
+
     try {
       const token = sessionStorage.getItem('token');
       const response = await axios.post(
@@ -211,7 +213,7 @@ const projectsSlice = createSlice({
       })
 
 
-        .addCase(submitPaymentProof.fulfilled, (state, action) => {
+      .addCase(submitPaymentProof.fulfilled, (state, action) => {
         const updatedProject = action.payload;
         const index = state.projects.findIndex(p => p.id === updatedProject.id);
         if (index !== -1) {
@@ -219,85 +221,87 @@ const projectsSlice = createSlice({
         }
       })
       .addCase(verifyPayment.fulfilled, (state, action) => {
-        const { project } = action.payload;
-        const index = state.projects.findIndex(p => p.id === project.id);
-        if (index !== -1) {
-          state.projects[index] = project;
+        const updatedPayment = action.payload.payment;
+        // Si tu stockes les projets avec leurs paiements
+        const project = state.projects.find(p => p.id === updatedPayment.project_id);
+        if (project) {
+          project.status = 'payment_verified';
         }
+        state.success = action.payload.message;
       })
-  
+
 
       // Récupération projets
       .addCase(fetchProjects.pending, (state) => {
         state.status = 'loading';
         state.error = null;
       })
-      .addCase(fetchProjects.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.projects = action.payload;
-      })
-      .addCase(fetchProjects.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload || action.error.message;
-      })
+    .addCase(fetchProjects.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      state.projects = action.payload;
+    })
+    .addCase(fetchProjects.rejected, (state, action) => {
+      state.status = 'failed';
+      state.error = action.payload || action.error.message;
+    })
 
 
-      .addCase(fetchProjectById.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(fetchProjectById.fulfilled, (state, action) => {
-        state.project = action.payload; // un seul projet
-        state.status = "succeeded";
-      })
-      .addCase(fetchProjectById.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
+    .addCase(fetchProjectById.pending, (state) => {
+      state.status = "loading";
+    })
+    .addCase(fetchProjectById.fulfilled, (state, action) => {
+      state.project = action.payload; // un seul projet
+      state.status = "succeeded";
+    })
+    .addCase(fetchProjectById.rejected, (state, action) => {
+      state.status = "failed";
+      state.error = action.payload;
+    })
 
 
 
 
-      .addCase(signContract.fulfilled, (state, action) => {
-        state.projects = action.payload; // Met à jour l'objet projet avec les données du serveur
-      })
-      .addCase(signContract.rejected, (state, action) => {
-        state.error = action.payload;
-      })
-      .addCase(approveContract.fulfilled, (state, action) => {
-        state.projects = action.payload; // Met à jour l'objet projet avec les données du serveur
-      })
-      .addCase(approveContract.rejected, (state, action) => {
-        state.error = action.payload;
-      })
+    .addCase(signContract.fulfilled, (state, action) => {
+      state.projects = action.payload; // Met à jour l'objet projet avec les données du serveur
+    })
+    .addCase(signContract.rejected, (state, action) => {
+      state.error = action.payload;
+    })
+    .addCase(approveContract.fulfilled, (state, action) => {
+      state.projects = action.payload; // Met à jour l'objet projet avec les données du serveur
+    })
+    .addCase(approveContract.rejected, (state, action) => {
+      state.error = action.payload;
+    })
 
-      // Accepter proposition
-      .addCase(acceptProposal.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(acceptProposal.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        const index = state.projects.findIndex(p => p.id === action.payload.id);
-        if (index !== -1) state.projects[index] = action.payload;
-      })
-      .addCase(acceptProposal.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload || action.error.message;
-      })
+    // Accepter proposition
+    .addCase(acceptProposal.pending, (state) => {
+      state.status = 'loading';
+    })
+    .addCase(acceptProposal.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      const index = state.projects.findIndex(p => p.id === action.payload.id);
+      if (index !== -1) state.projects[index] = action.payload;
+    })
+    .addCase(acceptProposal.rejected, (state, action) => {
+      state.status = 'failed';
+      state.error = action.payload || action.error.message;
+    })
 
-      // Refuser et négocier
-      .addCase(refuseAndNegotiate.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(refuseAndNegotiate.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        const index = state.projects.findIndex(p => p.id === action.payload.id);
-        if (index !== -1) state.projects[index] = action.payload;
-      })
-      .addCase(refuseAndNegotiate.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload || action.error.message;
-      });
-  },
+    // Refuser et négocier
+    .addCase(refuseAndNegotiate.pending, (state) => {
+      state.status = 'loading';
+    })
+    .addCase(refuseAndNegotiate.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      const index = state.projects.findIndex(p => p.id === action.payload.id);
+      if (index !== -1) state.projects[index] = action.payload;
+    })
+    .addCase(refuseAndNegotiate.rejected, (state, action) => {
+      state.status = 'failed';
+      state.error = action.payload || action.error.message;
+    });
+},
 });
 
 export const { resetCreateProjectStatus } = projectsSlice.actions;

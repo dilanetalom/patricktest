@@ -186,7 +186,7 @@ const navigate = useNavigate();
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 mb-2" htmlFor="deadline">Date limite souhaitée</label>
-            <input type="date" id="deadline" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md" />
+            <input type="date" required id="deadline" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md" />
           </div>
 
           {getSpecificFields(service.name)}
@@ -213,6 +213,7 @@ const navigate = useNavigate();
               <select
                 className="p-2 border border-gray-300 rounded-md"
                 value={currency}
+                required
                 onChange={(e) => setCurrency(e.target.value)}
               >
                
@@ -231,11 +232,12 @@ const navigate = useNavigate();
               <input
                 type="number"
                 id="priceRange"
+                required
                 value={clientPrice}
                 placeholder='votre budget'
                 onChange={(e) => setClientPrice(e.target.value)}
                 className="flex-1 p-2 border border-gray-300 rounded-md"
-                required
+                
               />
             </div>
           </div>

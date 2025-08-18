@@ -64,7 +64,7 @@ const Pending = () =>{
 
     return (
         <LayoutDashbord>
-            <div>
+            <div className='p-6 bg-gray-50'>
                 <h2 className="text-4xl font-bold mb-10 text-gray-800">Vos projets en attente</h2>
 
                 {isLoading && (
@@ -100,17 +100,17 @@ const Pending = () =>{
                                         <p className="text-gray-700"><span className="font-medium">Date d'échéance :</span> {new Date(project.deadline).toLocaleDateString()}</p>
                                         <p className="text-gray-700"><span className="font-medium">Statut :</span> <span className="capitalize">{project.status.replace(/_/g, ' ') === "pending"?"en attente de validation":"en négociation"}</span></p>
                                     </div>
-                                    <div className="px-6 py-4 bg-gray-50 flex flex-col sm:flex-row gap-3">
+                                    <div className="px-6 py-4 bg-gray-50 grid grid-cols-2 sm:flex-row gap-3 gap-2 text-xs">
                                         <button
                                             onClick={() => handleOpenDetails(project)}
-                                            className="text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200 w-full block"
+                                            className="text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200  block"
                                         >
                                             🔍 Voir les détails
                                         </button>
                                         {project.status === "negotiation" && (
                                             <button
                                                 onClick={() => handleOpenChat(project.id)}
-                                                className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200"
+                                                className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition-colors duration-200"
                                             >
                                                 💬 Ouvrir le chat
                                             </button>
