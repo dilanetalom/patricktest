@@ -20,18 +20,19 @@ const LoginPage = () => {
       dispatch(reset());
     }
 
-    if (isSuccess && user?.role) { // on attend que user.role existe
-    toast.success('Connexion réussie ! Redirection...');
-    const timer = setTimeout(() => {
-      if (user.role === 'client') {
-        navigate('/bords'); // client -> /bords
-      } else {
-        navigate('/bord'); // admin -> /bord
-      }
-    }, 500); // 500ms suffisent
+    if (isSuccess && user) {
+      toast.success('Connexion réussie ! Redirection...');
+      const timer = setTimeout(() => {
+        console.log(user);
+        
+        if (user.role === 'client') {
+          navigate('/bords');
+        } else {
+          navigate('/bord');
+        }
+      }, 1000);
 
-    return () => clearTimeout(timer);
-  
+      return () => clearTimeout(timer);
     }
   }, [isError, isSuccess, message, user, navigate, dispatch]);
 

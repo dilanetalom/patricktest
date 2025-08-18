@@ -38,7 +38,7 @@ const Sidebar = ({ setActiveView, activeView }) => {
     { id:6, name: 'Gestion utilisateurs', view: '/user' },
   ];
 
-  const currentNavItems = user?.role === 'client' ? navItemsClient : navItemsAdmin;
+  const currentNavItems = user?.user?.role === 'client' ? navItemsClient : navItemsAdmin;
 
   // Gestion du modal
   const handleOpenModal = () => setShowModal(true);
