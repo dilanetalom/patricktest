@@ -32,7 +32,7 @@ const Pending = () =>{
     
     // Filtrer uniquement les projets du client
     const clientProjects = Array.isArray(projects)
-       ?projects.filter(project => (project.status === 'pending' || project.status === 'negotiation' || project.status === 'accepted') && project.user_id === user?.user?.id)
+       ?projects.filter(project => (project.status === 'pending' || project.status === 'negotiation' || project.status === 'accepted'))
         : [];
     
     // Utiliser un hook de pagination pour gérer l'état
