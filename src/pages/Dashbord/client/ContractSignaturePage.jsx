@@ -30,6 +30,9 @@ const ContractSignaturePage = () => {
     }
   }, [dispatch, projectId]);
 
+
+  console.log(project);
+
   const openSignatureModal = () => {
     setTempSignature(null);
     setIsModalOpen(true);
@@ -58,7 +61,7 @@ const ContractSignaturePage = () => {
         setTempSignature(null);
         // Redirection ou mise à jour si nécessaire
         dispatch(fetchProjectById(projectId));
-        navigate("/paiment") 
+        navigate("/paiment")
       })
       .catch((err) => {
         toast.error('Erreur lors de la signature client.');
@@ -90,10 +93,19 @@ const ContractSignaturePage = () => {
   return (
     <LayoutDashbord>
       <div className="container mx-auto p-8">
+        <button
+
+          className="mt-4 bg-blue-600 text-white px-6 py-2  mb-4 rounded-lg hover:bg-blue-700"
+        >
+          Télécharger le contrat
+        </button>
         <div className="bg-white p-10 rounded-lg shadow-xl">
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-4">
-            Détails du Contrat - {project.name}
-          </h1>
+          <div className='flex gap-4'>
+            <h1 className="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-4">
+              Détails du Contrat - {project.name}
+            </h1>
+
+          </div>
 
           <ContractContent
             project={project}
@@ -215,9 +227,9 @@ const ContractContent = ({ project, openSignatureModal, tempSignature, isClient,
           <p className="font-semibold">Le Prestataire</p>
           <p>MPE Digital Solutions</p>
           {/* {project.admin_signature && ( */}
-            <img src={sign} alt="Signature Admin" className="mx-auto mt-2 h-56 w-56" />
+          <img src={sign} alt="Signature Admin" className="mx-auto mt-2 h-56 w-56" />
           {/* )} */}
-        
+
           {/* {!project.admin_signature && <p className="mt-4 text-gray-500">En attente de signature</p>}
           {project.admin_signature && <p className="mt-4 text-green-600">✅ Signé le {new Date(project.admin_signature_date).toLocaleDateString()}</p>} */}
         </div>

@@ -1,6 +1,7 @@
 // src/components/Navbar.jsx
 import React, { useEffect, useState } from 'react';
 import { BellIcon, UserCircleIcon } from '@heroicons/react/24/outline'; // Assure-toi d'avoir installé @heroicons/react
+import ProfileDropdown from './ProfileDropdown';
 
 const NavDash = () => {
   const [user, setUser] = useState({});
@@ -42,7 +43,7 @@ const NavDash = () => {
 
         {/* Espace pour l'avatar ou le nom de l'utilisateur */}
         <div className="flex items-center space-x-3">
-          <UserCircleIcon className="h-10 w-10 text-gray-400" />
+            <ProfileDropdown />
           <div className="text-gray-800 ">
             {/* {user} */}
            <span className='font-semibold text-lg'>  {user?user.firstName:null} </span>

@@ -27,7 +27,7 @@ const AcceptedProjects = () => {
     if (project.client_signature && project.admin_signature) {
       return "✔ Contrat signé par les deux";
     } else if (project.client_signature && !project.admin_signature) {
-      return "✔ Contrat signé par le client";
+      return "✔ Felicitations votre contrat est signé";
     } else if (!project.client_signature && project.admin_signature) {
       return "✔ Contrat signé par le prestataire";
     } else {
@@ -71,9 +71,15 @@ const AcceptedProjects = () => {
                   </p>
 
                   <p className="text-gray-700">
-                    <span className="font-medium">Statut :</span>{" "}
-                    <span className={`font-bold ${project.client_signature && project.admin_signature ? 'text-green-600' : 'text-blue-600'}`}>
-                      {getProjectStatus(project)}
+                    {/* <span className="font-medium">Statut :</span>{" "} */}
+                    <span className={`font-bold ${project.client_signature  ? 'text-blue-500 bg-green-100' : 'text-green-600'}`}>
+                     
+                        <div className="mt-4 p-4 rounded-lg bg-blue-100 border-l-4 border-blue-500  ">
+                                            <h4 className="font-semibold text-sm mb-1">Récapitulatif de la commande : </h4>
+                                            <p className="text-sm">
+                                                <span className="font-medium text-blue-600'"> {getProjectStatus(project)}</span>
+                                            </p>
+                                        </div>
                     </span>
                   </p>
                 </div>

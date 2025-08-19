@@ -11,30 +11,27 @@ const PaymentModal = ({ isOpen, onClose, onSubmit, project }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleFileChange = (event) => {
-        setProofFile(event.target.files[0]); // <-- Stocke le premier fichier
+        setProofFile(event.target.files[0]);
     };
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
 
+        if (!proofFile) {
+            toast.error("Veuillez sélectionner un fichier de preuve de paiement.");
+            return;
+        }
 
-    if (!proofFile) { // <-- Vérifie si un fichier a été sélectionné
-        toast.error("Veuillez sélectionner un fichier de preuve de paiement.");
-        return;
-    }
+        setIsSubmitting(true);
 
-    setIsSubmitting(true);
-
-    const formData = new FormData();
-    formData.append('paymentProof', proofFile); // <-- N'ajoute qu'un seul fichier
-
-  
+        const formData = new FormData();
+        formData.append('paymentProof', proofFile); // Côté client, le nom est 'paymentProof'
 
         dispatch(submitPaymentProof({ projectId: project.id, proof: formData }))
             .unwrap()
             .then(() => {
                 toast.success("Preuve de paiement soumise avec succès !");
-               setProofFile(null)
+                setProofFile(null);
                 onClose();
             })
             .catch((error) => {
@@ -42,9 +39,10 @@ const PaymentModal = ({ isOpen, onClose, onSubmit, project }) => {
                 toast.error(errorMessage);
             })
             .finally(() => {
-                setIsSubmitting(false); // <-- Arrête le chargement, que ce soit un succès ou un échec
+                setIsSubmitting(false);
             });
     };
+
 
     if (!project) return null;
 

@@ -136,28 +136,27 @@ export const submitPaymentProof = createAsyncThunk(
 );
 
 // Thunk pour la validation du paiement par l'admin
-export const verifyPayment = createAsyncThunk(
-  'projects/verifyPayment',
-  async (paymentId, { getState, rejectWithValue }) => {
+export const verifyPaymentsByProject = createAsyncThunk(
+  'projects/verifyPaymentsByProject',
+  async ({ projectId, paymentIds }, { rejectWithValue }) => {
     try {
       const token = sessionStorage.getItem('token');
       const response = await axios.post(
-        `${API_URL}payments/${paymentId}/verify`,
-        {},
+        `${API_URL}projects/${projectId}/verify-payments`, // Nouvelle route
+        { payment_ids: paymentIds }, // Envoi des IDs dans le corps de la requête
         {
           headers: {
             'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
         }
       );
-      // Retourne le paiement mis à jour
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
   }
 );
-
 
 
 // Action pour l'approbation du contrat par l'admin
@@ -187,7 +186,8 @@ export const approveContract = createAsyncThunk(
 const projectsSlice = createSlice({
   name: 'projects',
   initialState: {
-    projects: [],
+    projects: [],      
+  project: null,
     status: 'idle',
     error: null,
     createProjectStatus: { status: 'idle', error: null },
@@ -213,14 +213,15 @@ const projectsSlice = createSlice({
       })
 
 
-      .addCase(submitPaymentProof.fulfilled, (state, action) => {
-        const updatedProject = action.payload;
+    .addCase(submitPaymentProof.fulfilled, (state, action) => {
+        // La payload est maintenant l'objet { message, project }
+        const updatedProject = action.payload.project; 
         const index = state.projects.findIndex(p => p.id === updatedProject.id);
         if (index !== -1) {
-          state.projects[index] = updatedProject;
+            state.projects[index] = updatedProject;
         }
-      })
-      .addCase(verifyPayment.fulfilled, (state, action) => {
+    })
+      .addCase(verifyPaymentsByProject.fulfilled, (state, action) => {
         const updatedPayment = action.payload.payment;
         // Si tu stockes les projets avec leurs paiements
         const project = state.projects.find(p => p.id === updatedPayment.project_id);

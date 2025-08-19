@@ -1,185 +1,194 @@
-// src/pages/PaymentPage.jsx
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchProjects, submitPaymentProof, verifyPayment } from '../../../store/projectsSlice';
-import LayoutDashbord from '../LayoutDashbord';
-import PaymentModal from './PaymentModal';
-import { toast } from 'react-toastify';
-import { API_URL } from '../../../store/url'; // Importez votre URL de base de l'API
+    // src/pages/PaymentPage.jsx
+    import React, { useEffect, useState } from 'react';
+    import { useDispatch, useSelector } from 'react-redux';
+    import { fetchProjects, submitPaymentProof } from '../../../store/projectsSlice';
+    import LayoutDashbord from '../LayoutDashbord';
+    import PaymentModal from './PaymentModal';
+    import { toast } from 'react-toastify';
+    import { API_URL } from '../../../store/url'; 
 
-const PaymentPage = () => {
-    const dispatch = useDispatch();
-    const { projects, status, error } = useSelector(state => state.projects);
-    const { user } = useSelector(state => state.auth);
+    const PaymentPage = () => {
+        const dispatch = useDispatch();
+        const { projects , status, error } = useSelector(state => state.projects);
+        const { user } = useSelector(state => state.auth);
 
-    const isAdmin = user?.user?.role === 'admin';
-    const isClient = user?.user?.role === 'client';
+        const isAdmin = user?.user?.role === 'admin';
+        const isClient = user?.user?.role === 'client';
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedProjectId, setSelectedProjectId] = useState(null);
+        const [isModalOpen, setIsModalOpen] = useState(false);
+        const [selectedProjectId, setSelectedProjectId] = useState(null);
 
-    useEffect(() => {
-        if (status === 'idle') {
-            dispatch(fetchProjects());
-        }
-    }, [dispatch, status]);
+        useEffect(() => {
+            if (status === 'idle') {
+                dispatch(fetchProjects());
+            }
+        }, [dispatch, status]);
 
-    const filteredProjects = projects.filter(project => {
-        return project.status === 'contract_signed' || project.status === 'payment_submitted';
-    });
-
-    const handleOpenModal = (projectId) => {
-        setSelectedProjectId(projectId);
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setSelectedProjectId(null);
-        setIsModalOpen(false);
-    };
-
-    // Modification pour accepter un tableau de fichiers
-    const handleProofSubmit = (proofFiles) => {
-        if (!proofFiles || proofFiles.length === 0) {
-            toast.error("Aucune preuve sélectionnée !");
-            return;
-        }
-
-        const formData = new FormData();
-        proofFiles.forEach((file, index) => {
-            formData.append(`paymentProofs[${index}]`, file);
+        const filteredProjects = projects.filter(project => {
+            return project.status === 'contract_signed' || project.status === 'payment_submitted' || project.status === 'payment_refused' || project.status === 'in_progress';
         });
 
-        dispatch(submitPaymentProof({ projectId: selectedProjectId, proof: formData }))
-            .unwrap()
-            .then(() => {
-                toast.success("Preuve(s) de paiement soumise(s) avec succès.");
-                handleCloseModal();
-                dispatch(fetchProjects()); // Actualise la liste des projets
-            })
-            .catch((err) => {
-                const errorMessage = err?.message || "Erreur lors de la soumission de la preuve.";
-                toast.error(errorMessage);
+        const handleOpenModal = (projectId) => {
+            setSelectedProjectId(projectId);
+            setIsModalOpen(true);
+        };
+
+        const handleCloseModal = () => {
+            setSelectedProjectId(null);
+            setIsModalOpen(false);
+        };
+
+        const handleProofSubmit = (proofFiles) => {
+            if (!proofFiles || proofFiles.length === 0) {
+                toast.error("Aucune preuve sélectionnée !");
+                return;
+            }
+
+            const formData = new FormData();
+            proofFiles.forEach((file, index) => {
+                formData.append(`paymentProofs[${index}]`, file);
             });
-    };
 
-    const handleVerifyPayment = (projectId) => {
-        dispatch(verifyPayment(projectId))
-            .unwrap()
-            .then(() => {
-                toast.success("Paiement vérifié avec succès !");
-                dispatch(fetchProjects()); // Actualise la liste des projets
-            })
-            .catch((err) => {
-                const errorMessage = err?.message || "Erreur lors de la vérification du paiement.";
-                toast.error(errorMessage);
-            });
-    };
+            dispatch(submitPaymentProof({ projectId: selectedProjectId, proof: formData }))
+                .unwrap()
+                .then(() => {
+                    toast.success("Preuve(s) de paiement soumise(s) avec succès.");
+                    handleCloseModal();
+                    dispatch(fetchProjects());
+                })
+                .catch((err) => {
+                    const errorMessage = err?.message || "Erreur lors de la soumission de la preuve.";
+                    toast.error(errorMessage);
+                });
+        };
 
-    // Fonction pour télécharger les infos de paiement
-    const handleDownloadPaymentInfo = (projectId) => {
-        // Supposons une route API qui génère le PDF
-        const pdfUrl = `${API_URL}projects/${projectId}/payment-info-pdf`;
-        window.open(pdfUrl, '_blank');
-    };
 
-    if (status === 'loading') return <LayoutDashbord><div>Chargement...</div></LayoutDashbord>;
-    if (error) return <LayoutDashbord><div className="text-red-500">Erreur: {error.message}</div></LayoutDashbord>;
+        const handleDownloadPaymentInfo = (projectId) => {
+            const pdfUrl = `${API_URL}projects/${projectId}/payment-info-pdf`;
+            window.open(pdfUrl, '_blank');
+        };
 
-    return (
-        <LayoutDashbord>
-            <div className="p-8  bg-gray-50">
-                <h2 className="text-3xl font-bold mb-6 text-gray-800">
-                    {isAdmin ? "Vérification des paiements" : "Soumettre les preuves de paiment"}
-                </h2>
+        if (status === 'loading') return <LayoutDashbord><div>Chargement...</div></LayoutDashbord>;
+        if (error) return <LayoutDashbord><div className="text-red-500">Erreur: {error.message}</div></LayoutDashbord>;
 
-                {filteredProjects.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredProjects.map(project => (
-                            <div key={project.id} className="bg-white p-6 rounded-lg shadow-md border-l-4 border-yellow-500">
-                                <h3 className="text-xl font-semibold mb-2">{project.name}</h3>
-                                <p className="text-md  mb-2">Date de signature de contrat : {project.client_signature_date}</p>
+        return (
+            <LayoutDashbord>
+                <div className="p-8 bg-gray-50">
+                    <h2 className="text-3xl font-bold mb-6 text-gray-800">
+                        {isAdmin ? "Vérification des paiements" : "Soumettre les preuves de paiement"}
+                    </h2>
+                    
+                    {filteredProjects.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {filteredProjects.map(project => (
+                                <div key={project.id} className="bg-white p-6 rounded-lg shadow-md">
+                                    <h3 className="text-xl font-semibold mb-2">{project.name}</h3>
+                                    <p className="text-md mb-2">Date de signature de contrat : {project.client_signature_date}</p>
 
-                                {isAdmin && (
-                                    <p className="text-gray-700 mb-2">
-                                        <span className="font-medium">Client :</span> {project.user?.firstName} {project.user?.lastName}
-                                    </p>
-                                )}
+                                    {/* Message de statut pour le client */}
+                                    {isClient && (
+                                        <>
+                                            {project.status === 'payment_submitted' && (
+                                                <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4">
+                                                    <p className="font-bold">Paiement en attente de validation.</p>
+                                                    <p className="text-sm mt-1">Votre preuve de paiement a bien été soumise. L'administrateur va la vérifier prochainement.</p>
+                                                </div>
+                                            )}
+                                            {project.status === 'payment_refused' && (
+                                                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
+                                                    <p className="font-bold">Désolé, votre paiement a été refusé.</p>
+                                                    <p className="text-sm mt-1">Veuillez soumettre une nouvelle preuve de paiement.</p>
+                                                </div>
+                                            )}
+                                            {project.status === 'in_progress' && (
+                                                <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
+                                                    <p className="font-bold">Paiement validé !</p>
+                                                    <p className="text-sm mt-1">Votre projet a officiellement démarré.</p>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
 
-                                {/* Boutons pour le client */}
-                                {isClient && (
-                                    <div className="flex flex-col  mt-4 gap-3 ">
-                                        <button
-                                            onClick={() => handleDownloadPaymentInfo(project.id)}
-                                            className="bg-purple-600 text-white px-4 py-3  rounded-lg hover:bg-purple-700 transition"
-                                        >
-                                            Télécharger les infos de paiement
-                                        </button>
-                                        {!project.paymentProof && (
-                                            <button
-                                                onClick={() => handleOpenModal(project.id)}
-                                                className="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition"
-                                            >
-                                               {project.status === 'payment_submitted'?"Modifier la preuve de paiement ": "Soumettre preuve de paiement"} 
-                                            </button>
-                                        )}
-                                        {project.status === 'payment_submitted' && (
-                                            <button
-                                                onClick={() => handleOpenModal(project.id)}
-                                                className="bg-green-600 text-white px-4 py-3  w-full rounded-lg hover:bg-blue-700 transition"
-                                            >
-                                                Voir les details
-                                            </button>
-                                        )}
-                                        {project.paymentProof && (
-                                            <p className="text-green-600 font-medium">Preuve soumise, en attente de validation.</p>
-                                        )}
-                                    </div>
-                                )}
+                                    {/* Boutons pour le client */}
+                                    {isClient && (
+                                        <div className="flex flex-col mt-4 gap-3">
+                                            {(project.status === 'contract_signed' || project.status === 'payment_refused') && (
+                                                <>
+                                                    <button
+                                                        onClick={() => handleDownloadPaymentInfo(project.id)}
+                                                        className="bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition"
+                                                    >
+                                                    infos de paiement
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleOpenModal(project.id)}
+                                                        className="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition"
+                                                    >
+                                                        Soumettre preuve de paiement
+                                                    </button>
+                                                </>
+                                            )}
+                                            {/* Bouton pour voir les détails (utile si paiement en attente ou refusé) */}
+                                            {(project.status === 'payment_submitted' || project.status === 'payment_refused') && (
+                                                <button
+                                                    onClick={() => handleOpenModal(project.id)}
+                                                    className="bg-gray-600 text-white px-4 py-3 w-full rounded-lg hover:bg-gray-700 transition"
+                                                >
+                                                    Voir les détails de la preuve
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+                                    
+                                    {/* Boutons pour l'admin */}
+                                    {isAdmin && (
+                                        <div className="flex flex-col mt-4 gap-3">
+                                            <p className="text-gray-700 mb-2">
+                                                <span className="font-medium">Client :</span> {project.user?.firstName} {project.user?.lastName}
+                                            </p>
+                                            {project.status === 'payment_submitted' && project.payment_info?.proof_paths && (
+                                                <>
+                                                    <a
+                                                        href={`${API_URL}${project.payment_info.proof_paths[0]}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition text-center"
+                                                    >
+                                                        Voir la preuve
+                                                    </a>
+                                                    <button
+                                                    
+                                                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                                                    >
+                                                        Valider le paiement
+                                                    </button>
+                                                </>
+                                            )}
+                                            {project.status === 'in_progress' && (
+                                                <p className="text-green-600 font-bold">Paiement déjà validé.</p>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-500">
+                            {isAdmin ? "Aucun paiement en attente de vérification." : "Aucun paiement en attente de votre part."}
+                        </p>
+                    )}
+                </div>
 
-                                {/* Boutons pour l'admin */}
-                                {isAdmin && project.paymentProof && (
-                                    <div className="flex flex-col gap-2 mt-4">
-                                        <a
-                                            href={project.paymentProof} // Assurez-vous que c'est une URL valide, par ex. `${API_URL}${project.paymentProof}`
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition text-center"
-                                        >
-                                            Voir la preuve
-                                        </a>
-                                        <button
-                                            onClick={() => handleVerifyPayment(project.id)}
-                                            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
-                                        >
-                                            Valider le paiement
-                                        </button>
-                                    </div>
-                                )}
-
-                                {isAdmin && !project.paymentProof && (
-                                    <p className="text-gray-500 mt-4">En attente de la preuve de paiement du client.</p>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <p className="text-gray-500">
-                        {isAdmin ? "Aucun paiement en attente de vérification." : "Aucun paiement en attente de votre part."}
-                    </p>
+                {isClient && (
+                    <PaymentModal
+                        isOpen={isModalOpen}
+                        onClose={handleCloseModal}
+                        onSubmit={handleProofSubmit}
+                        project={projects.find(p => p.id === selectedProjectId)}
+                    />
                 )}
-            </div>
+            </LayoutDashbord>
+        );
+    };
 
-            {isClient && (
-                <PaymentModal
-                    isOpen={isModalOpen}
-                    onClose={handleCloseModal}
-                    onSubmit={handleProofSubmit}
-                    project={projects.find(p => p.id === selectedProjectId)}
-                />
-            )}
-        </LayoutDashbord>
-    );
-};
-
-export default PaymentPage;
+    export default PaymentPage;

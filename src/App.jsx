@@ -26,6 +26,7 @@ import Bords from "./pages/Dashbord/Bords";
 import PaymentPage from "./pages/Dashbord/client/PaymentPage";
 import Commande from "./pages/Dashbord/admin/Commande";
 import AdminPaymentVerification from "./pages/Dashbord/admin/AdminPaymentVerification";
+import ProgressPage from "./pages/Dashbord/admin/ProgressPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -74,6 +75,7 @@ function App() {
             <Route path="/user" element={<User />} />
             <Route path="/bord" element={<Bord />} />
           <Route path="/verify" element={<AdminPaymentVerification/>} />
+          <Route path="/ProgressPage" element={<ProgressPage/>} />
 
           </Route>
           <Route element={<PrivateRoute role="client" />}>
