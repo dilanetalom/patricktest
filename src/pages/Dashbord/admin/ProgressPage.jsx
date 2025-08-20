@@ -51,7 +51,10 @@ const ProgressPage = () => {
                 <h2 className="text-3xl font-bold mb-6 text-gray-800">Projets en cours d'exécution</h2>
                 {inProgressProjects.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {inProgressProjects.map(project => (
+                        {inProgressProjects.map(project => {
+                                                        const totalProgress = (project.updates || []).reduce((sum, update) => sum + (update.progress_percentage || 0), 0);
+
+                            return(
                             <div
                                 key={project.id}
                                 onClick={() => openProgressModal(project)}
@@ -66,12 +69,12 @@ const ProgressPage = () => {
                                 </p>
                                 <p className="text-gray-600 mb-1">
                                     <span className="font-medium">Progression :</span>
-                                    <span className="text-lg font-bold text-blue-600 ml-2">{project.updates[0]?.progress_percentage || 0}%</span>
+                                    <span className="text-lg font-bold text-blue-600 ml-2">{totalProgress || 0}%</span>
                                 </p>
                                 <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
                                     <div
                                         className="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out"
-                                        style={{ width: `${project.updates[0]?.progress_percentage || 0}%` }}
+                                        style={{ width: `${totalProgress || 0}%` }}
                                     ></div>
                                 </div>
                                 <p className="text-gray-500 text-sm mt-4 italic">
@@ -84,7 +87,7 @@ const ProgressPage = () => {
                                         Les dernieres mises à jours
                                     </button>
                             </div>
-                        ))}
+)})}
                     </div>
                 ) : (
                     <p className="text-gray-500 text-center text-lg mt-10">

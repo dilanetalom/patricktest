@@ -22,11 +22,17 @@
             if (status === 'idle') {
                 dispatch(fetchProjects());
             }
+            
         }, [dispatch, status]);
 
-        const filteredProjects = projects.filter(project => {
-            return project.status === 'contract_signed' || project.status === 'payment_submitted' || project.status === 'payment_refused' || project.status === 'in_progress';
-        });
+
+
+    const filteredProjects = Array.isArray(projects)
+  ? projects.filter(project =>
+      (isClient ? project.user_id === user?.user?.id : true) &&
+      ['contract_signed', 'payment_submitted', 'payment_refused', 'in_progress'].includes(project.status)
+    )
+  : [];
 
         const handleOpenModal = (projectId) => {
             setSelectedProjectId(projectId);
@@ -78,7 +84,7 @@
                         {isAdmin ? "Vérification des paiements" : "Soumettre les preuves de paiement"}
                     </h2>
                     
-                    {filteredProjects.length > 0 ? (
+                    {Array.isArray(projects) && filteredProjects.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredProjects.map(project => (
                                 <div key={project.id} className="bg-white p-6 rounded-lg shadow-md">

@@ -6,9 +6,11 @@ import { toast } from 'react-toastify';
 import LayoutDashbord from '../LayoutDashbord';
 import PaymentProofsModal from './PaymentProofsModal';
 import ConfirmationModal from './ConfirmationModal';
+import { useNavigate } from 'react-router-dom';
 
 const AdminPaymentVerification = () => {
 const dispatch = useDispatch();
+const navigate = useNavigate()
     const { projects, status, error } = useSelector(state => state.projects);
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -60,6 +62,7 @@ const dispatch = useDispatch();
                         .then(() => {
                             toast.success("Paiements vérifiés avec succès pour le projet !");
                             dispatch(fetchProjects());
+                            navigate("/ProgressPage")
                         })
                         .catch((err) => {
                             const errorMessage = err?.message || "Erreur lors de la vérification des paiements.";

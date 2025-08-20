@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../../store/authSlice';
+import { toast } from 'react-toastify';
 
 const Sidebar = ({ setActiveView, activeView }) => {
 
@@ -35,7 +36,8 @@ const Sidebar = ({ setActiveView, activeView }) => {
     { id:3, name: 'Lancer le projet ', view: '/ProgressPage' },
     {id:4, name: 'Projet(s) finalisé(s)', view: '/completed' },
     // { id:5, name: 'Paramètres du Profil', view: '/profile' },
-    { id:6, name: 'Gestion utilisateurs', view: '/user' },
+    { id:6, name: 'Clients', view: '/user' },
+    // { id:6, name: 'Gestion utilisateurs', view: '/user' },
   ];
 
   const currentNavItems = user?.user?.role === 'client' ? navItemsClient : navItemsAdmin;

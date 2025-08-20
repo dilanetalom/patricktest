@@ -28,10 +28,13 @@ const User = () => {
     const [selectedUser, setSelectedUser] = useState(null);
 
     // Données Redux
-    const { allUsers, isLoading, isError, message } = useSelector(
+    const { users, isLoading, isError, message } = useSelector(
         (state) => state.auth
     );
 
+
+    console.log(users);
+    
     // Fonction fictive pour simuler la suppression d'un utilisateur
     const handleDelete = (userId) => {
         // Remplacer window.confirm par une modale pour une meilleure UX
@@ -59,10 +62,10 @@ const User = () => {
         }
         
     }, [dispatch, isError, message]);
-    console.log(allUsers);
+    console.log(users);
     // Logique de pagination
     // Assurez-vous que allUsers est un tableau avant de l'utiliser
-    const usersToDisplay = Array.isArray(allUsers?.data) ? allUsers.data : [];
+    const usersToDisplay = Array.isArray(users?.data) ? users.data : [];
     const indexOfLastUser = currentPage * ITEMS_PER_PAGE;
     const indexOfFirstUser = indexOfLastUser - ITEMS_PER_PAGE;
     const currentUsers = usersToDisplay.slice(indexOfFirstUser, indexOfLastUser);
@@ -97,7 +100,7 @@ const User = () => {
         );
     }
 
-    if (!allUsers || usersToDisplay.length === 0) {
+    if (!users || usersToDisplay.length === 0) {
         return (
             <LayoutDashbord>
                 <div className="text-center p-8">

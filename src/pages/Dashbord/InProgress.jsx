@@ -21,7 +21,7 @@ const InProgress = () => {
 
     // Filtre les projets pour l'utilisateur actuel et dont le statut est "payment_verified" ou "in_progress"
     const userProjects = projects.filter(project =>
-        (project.status === 'payment_verified' || project.status ==='in_progress' )
+        (project.status === 'payment_verified' || project.status === 'in_progress')
     );
 
     // Récupère tous les projets au chargement du composant
@@ -55,42 +55,72 @@ const InProgress = () => {
                 <h2 className="text-3xl font-bold mb-6 text-gray-800">Suivi de vos projets en cours</h2>
                 {userProjects.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {userProjects.map(project => (
-                            <div
-                                key={project.id}
-                                className="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500 transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:transform hover:-translate-y-1"
-                            >
-                                <h3 className="text-xl font-semibold mb-2 text-gray-800">{project.name}</h3>
-                                <p className="text-gray-600 mb-1">
-                                    <span className="font-medium">Statut :</span>
-                                    <span className="py-1 px-2 rounded-full inline-block text-sm font-semibold ml-2 bg-blue-100 text-blue-800">
-                                        En cours d'exécution
-                                    </span>
-                                </p>
-                                <p className="text-gray-600 mb-1">
-                                    <span className="font-medium">Progression :</span>
-                                    <span className="text-lg font-bold text-blue-600 ml-2">{project.updates[0]?.progress_percentage || 0}%</span>
-                                </p>
-                                <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                                    <div
-                                        className="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out"
-                                        style={{ width: `${project.updates[0]?.progress_percentage || 0}%` }}
-                                    ></div>
-                                </div>
-                                <p className="text-gray-500 text-sm mt-4 italic">
-                                    Dernière mise à jour : {moment(project.updated_at).fromNow()}
-                                </p>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation(); // Empêcher l'ouverture de la modale parent
-                                        openUpdatesModal(project);
-                                    }}
-                                    className="text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 mt-3 rounded-lg transition-colors duration-200 block w-full"
+                        {userProjects.map(project => {
+                            const totalProgress = (project.updates || []).reduce((sum, update) => sum + (update.progress_percentage || 0), 0);
+                            const isCompleted = totalProgress >= 100;
+                            return (
+                                <div
+                                    key={project.id}
+                                    className="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500 transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:transform hover:-translate-y-1"
                                 >
-                                    Les dernières mises à jour
-                                </button>
-                            </div>
-                        ))}
+                                    <h3 className="text-xl font-semibold mb-2 text-gray-800">{project.name}</h3>
+                                    <p className="text-gray-600 mb-1">
+                                        <span className="font-medium">Statut :</span>
+                                        <span className="py-1 px-2 rounded-full inline-block text-sm font-semibold ml-2 bg-blue-100 text-blue-800">
+                                           {isCompleted?"Projet terminé":"En cours d'exécution"} 
+                                        </span>
+                                    </p>
+                                    <p className="text-gray-600 mb-1">
+                                        <span className="font-medium">Progression :</span>
+                                        <span className="text-lg font-bold text-blue-600 ml-2">{totalProgress || 0}%</span>
+                                    </p>
+                                    <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                                        <div
+                                            className="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out"
+                                            style={{ width: `${totalProgress}%` }}
+                                        ></div>
+                                    </div>
+                                    <p className="text-gray-500 text-sm mt-4 italic">
+                                        Dernière mise à jour : {moment(project.updated_at).fromNow()}
+                                    </p>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Empêcher l'ouverture de la modale parent
+                                            openUpdatesModal(project);
+                                        }}
+                                        className="text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 mt-3 rounded-lg transition-colors duration-200 block w-full"
+                                    >
+                                        Les dernières mises à jour
+                                    </button>
+
+                                     {isCompleted ? 
+                                      
+                                        <div className="mt-4 flex space-x-2">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    // Logique pour accepter le projet
+                                                    alert('Projet accepté !');
+                                                }}
+                                                className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
+                                            >
+                                                Accepter
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    // Logique pour apporter des critiques
+                                                    alert('Apporter des critiques !');
+                                                }}
+                                                className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
+                                            >
+                                                Critiques
+                                            </button>
+                                        </div>:null
+                                    }
+                                </div>
+                            )
+                        })}
                     </div>
                 ) : (
                     <p className="text-gray-500 text-center text-lg mt-10">

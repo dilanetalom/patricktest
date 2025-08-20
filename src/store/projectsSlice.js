@@ -187,7 +187,7 @@ const projectsSlice = createSlice({
   name: 'projects',
   initialState: {
     projects: [],      
-  project: null,
+    project: null,
     status: 'idle',
     error: null,
     createProjectStatus: { status: 'idle', error: null },

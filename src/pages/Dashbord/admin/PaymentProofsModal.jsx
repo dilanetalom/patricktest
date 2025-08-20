@@ -11,8 +11,8 @@ const PaymentProofsModal = ({ isOpen, onClose, payments }) => {
         <Modal
             isOpen={isOpen}
             onRequestClose={onClose}
-            className="modal-content p-6 bg-white rounded-lg shadow-xl"
-            overlayClassName="modal-overlay fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-75 z-50"
+            className="modal-content p-6 bg-white w-[70%] rounded-lg shadow-xl"
+            overlayClassName="modal-overlay fixed inset-0 flex items-center justify-center  bg-gray-900 bg-opacity-75 z-50"
         >
             <div className="flex justify-between items-center mb-4 pb-2 border-b-2">
                 <h2 className="text-2xl font-bold text-gray-800">Preuves de paiement</h2>
