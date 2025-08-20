@@ -6,11 +6,15 @@ import LayoutDashbord from '../LayoutDashbord';
 import PaymentModal from './PaymentModal';
 import { toast } from 'react-toastify';
 import { API_URL } from '../../../store/url';
+import PaymentProofsModal from '../admin/PaymentProofsModal';
 
 const PaymentPage = () => {
     const dispatch = useDispatch();
     const { projects, status, error } = useSelector(state => state.projects);
     const { user } = useSelector(state => state.auth);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+        const [confirmationModalIsOpen, setConfirmationModalIsOpen] = useState(false);
+        const [selectedProjectPayments, setSelectedProjectPayments] = useState([]);
 
     const isAdmin = user?.user?.role === 'admin';
     const isClient = user?.user?.role === 'client';
@@ -42,6 +46,16 @@ const PaymentPage = () => {
     const handleCloseModal = () => {
         setSelectedProjectId(null);
         setIsModalOpen(false);
+    };
+
+       const openProofsModal = (payments) => {
+        setSelectedProjectPayments(payments);
+        setModalIsOpen(true);
+    };
+
+    const closeProofsModal = () => {
+        setSelectedProjectPayments([]);
+        setModalIsOpen(false);
     };
 
     const handleProofSubmit = (proofFiles) => {
@@ -137,7 +151,8 @@ const PaymentPage = () => {
                                         {/* Bouton pour voir les détails (utile si paiement en attente ou refusé) */}
                                         {(project.status === 'payment_submitted' || project.status === 'payment_refused') && (
                                             <button
-                                                onClick={() => handleOpenModal(project.id)}
+                                           onClick={() => openProofsModal(project.payments)}
+
                                                 className="bg-gray-600 text-white px-4 py-3 w-full rounded-lg hover:bg-gray-700 transition"
                                             >
                                                 Voir les détails de la preuve
@@ -192,7 +207,14 @@ const PaymentPage = () => {
                     onSubmit={handleProofSubmit}
                     project={Array.isArray(projects) ? projects.find(p => p.id === selectedProjectId) : null}
                 />
+
+                
             )}
+               <PaymentProofsModal
+                isOpen={modalIsOpen}
+                onClose={closeProofsModal}
+                payments={selectedProjectPayments}
+            />
         </LayoutDashbord>
     );
 };
