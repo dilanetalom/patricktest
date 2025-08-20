@@ -1,5 +1,5 @@
 // src/components/PaymentModal.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from '../Modal';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
@@ -13,6 +13,10 @@ const PaymentModal = ({ isOpen, onClose, onSubmit, project }) => {
     const handleFileChange = (event) => {
         setProofFile(event.target.files[0]);
     };
+    // useEffect(()=>{
+    //     console.log(project?.id);
+        
+    // })
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
@@ -27,7 +31,7 @@ const PaymentModal = ({ isOpen, onClose, onSubmit, project }) => {
         const formData = new FormData();
         formData.append('paymentProof', proofFile); // Côté client, le nom est 'paymentProof'
 
-        dispatch(submitPaymentProof({ projectId: project.id, proof: formData }))
+        dispatch(submitPaymentProof({ projectId: project?.id, proof: formData }))
             .unwrap()
             .then(() => {
                 toast.success("Preuve de paiement soumise avec succès !");

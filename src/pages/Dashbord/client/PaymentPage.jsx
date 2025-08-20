@@ -27,12 +27,9 @@
 
 
 
- const filteredProjects = Array.isArray(projects)
+    const filteredProjects = Array.isArray(projects)
   ? projects.filter(project =>
-      (isClient 
-        ? (project.user_id === user?.user?.id || project.user?.id === user?.user?.id)
-        : true
-      ) &&
+      (isClient ? project.user_id === user?.user?.id : true) &&
       ['contract_signed', 'payment_submitted', 'payment_refused', 'in_progress'].includes(project.status)
     )
   : [];
