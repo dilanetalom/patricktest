@@ -190,7 +190,7 @@
                         isOpen={isModalOpen}
                         onClose={handleCloseModal}
                         onSubmit={handleProofSubmit}
-                        project={projects.find(p => p.id === selectedProjectId)}
+                         project={Array.isArray(projects) ? projects.find(p => p.id === selectedProjectId) : null}
                     />
                 )}
             </LayoutDashbord>
