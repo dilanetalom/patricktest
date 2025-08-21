@@ -16,8 +16,8 @@ const PaymentPage = () => {
         const [confirmationModalIsOpen, setConfirmationModalIsOpen] = useState(false);
         const [selectedProjectPayments, setSelectedProjectPayments] = useState([]);
 
-    const isAdmin = user?.user?.role === 'admin';
-    const isClient = user?.user?.role === 'client';
+    const isAdmin = user?.role === 'admin';
+    const isClient = user?.role === 'client';
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProjectId, setSelectedProjectId] = useState(null);
@@ -33,7 +33,7 @@ const PaymentPage = () => {
 
     const filteredProjects = Array.isArray(projects)
         ? projects.filter(project =>
-            (isClient ? Number(project.user_id) === Number(user?.user?.id) : true) &&
+            (isClient ? Number(project.user_id) === Number(user?.id) : true) &&
             ['contract_signed', 'payment_submitted', 'payment_refused', 'in_progress'].includes(project.status)
         )
         : [];

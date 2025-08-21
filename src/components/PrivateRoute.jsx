@@ -6,30 +6,30 @@ import { useSelector } from "react-redux";
 const PrivateRoute = ({ requiredRole }) => {
   const { user } = useSelector((state) => state.auth);
 
-  // Check for the user object first. If it doesn't exist, the user isn't authenticated.
+  // Vérifie si l'utilisateur est authentifié.
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // Use optional chaining to safely get the user's role.
-  const userRole = user??user.role;
+  // Si un rôle spécifique est requis et que le rôle de l'utilisateur ne correspond pas, on redirige.
+  // Note: La vérification user?.user?.role n'est plus nécessaire après la correction du slice.
+  const userRole = user.role;
 
-  // If a specific role is required and the user's role does not match, redirect.
   if (requiredRole && userRole !== requiredRole) {
-    console.log(`Access denied. User role: ${userRole}, Required role: ${requiredRole}`);
+    console.log(`Accès refusé. Rôle de l'utilisateur: ${userRole}, Rôle requis: ${requiredRole}`);
 
-    // Redirect based on the current user's role.
+    // Redirige en fonction du rôle de l'utilisateur.
     if (userRole === "admin") {
       return <Navigate to="/bord" replace />;
     } else if (userRole === "client") {
       return <Navigate to="/bords" replace />;
     } else {
-      // Fallback for an unknown role.
+      // Cas par défaut pour un rôle inconnu ou non autorisé.
       return <Navigate to="/unauthorized" replace />;
     }
   }
 
-  // If the user is authenticated and the role matches (or no specific role is required), render the child component.
+  // Si l'utilisateur est authentifié et le rôle est correct, on affiche le contenu de la route.
   return <Outlet />;
 };
 

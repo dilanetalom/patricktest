@@ -24,7 +24,7 @@ const LoginPage = () => {
       toast.success('Connexion réussie ! Redirection...');
       const timer = setTimeout(() => {
         console.log(user);
-        
+
         if (user.role === 'client') {
           navigate('/bords');
         } else {
@@ -47,14 +47,14 @@ const LoginPage = () => {
     <div className="flex h-screen bg-white">
       <div className="hidden lg:flex w-1/2 bg-blue-950 text-white flex-col justify-center items-center p-8 relative">
         <div className=" top-8 left-8 text-2xl font-bold">
-                           <div className={`w-full h-full bg-gray-50 rounded-full`}>
-                               <img
-                                   src={logo}
-                                   alt=""
-                                   className="h-[500px] w-full object-cover object-center"
-                               />
-                           </div>
-                       </div>
+          <div className={`w-full h-full bg-gray-50 rounded-full`}>
+            <img
+              src={logo}
+              alt=""
+              className="h-[500px] w-full object-cover object-center"
+            />
+          </div>
+        </div>
         <div className="text-center mt-6 flex items-center gap-3">
           <p>Je n'ai pas encore de compte ?</p>
           <Link
@@ -114,10 +114,14 @@ const LoginPage = () => {
                   {view ? '👁️' : '🙈'}
                 </div>
               </div>
-              <div className="text-right mt-2">
-                <a href="#" className="text-sm font-medium text-blue-600 hover:underline">
-                  Mot de passe oublié ?
-                </a>
+              <div className="text-center mt-6 flex items-center gap-3">
+                <p>Avez-vous un Compte ?</p>
+                <Link
+                  to="/register"
+                  className="text-red-600  hover:border-b hover:border-gray-100 transition"
+                >
+                   s’inscrire
+                </Link>
               </div>
             </div>
 

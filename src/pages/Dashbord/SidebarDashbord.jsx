@@ -23,8 +23,8 @@ const Sidebar = ({ setActiveView, activeView }) => {
     { id:2, name: 'Commande en attente de validation', view: '/pending' },
     { id:3, name: 'Signature du contrat ', view: '/contrat' },
     { id:4, name: 'Paiement ', view: '/paiment' },
-    { id:5, name: 'Projet débuter ', view: '/in-progress' },
-    { id:6, name: 'Projets terminé', view: '/completed' },
+    { id:5, name: 'Projet(s) debuté(s)', view: '/in-progress' },
+    { id:6, name: 'Projet(s) terminé(s)', view: '/completed' },
     // { id:7, name: 'Paramètres du Profil', view: '/profile' },
   ];
 
@@ -40,7 +40,7 @@ const Sidebar = ({ setActiveView, activeView }) => {
     // { id:6, name: 'Gestion utilisateurs', view: '/user' },
   ];
 
-  const currentNavItems = user?.user?.role === 'client' ? navItemsClient : navItemsAdmin;
+  const currentNavItems = user?.role === 'client' ? navItemsClient : navItemsAdmin;
 
   // Gestion du modal
  
@@ -55,7 +55,7 @@ const Sidebar = ({ setActiveView, activeView }) => {
   return (
     <aside className="w-[19%] h-[100vh]  fixed bg-gray-900 text-gray-200 flex flex-col p-6 shadow-2xl">
       <Link to={user?.user?.role === 'client'?"/bords":"/bord"} className="text-3xl font-extrabold text-white mb-10 tracking-wide">
-        Dashboard
+        Tableau de bord
       </Link>
       <nav className="flex-grow">
         <ul className="space-y-4">

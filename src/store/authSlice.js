@@ -36,7 +36,10 @@ export const getProfile = createAsyncThunk('auth/me', async (_, thunkAPI) => {
     const token = sessionStorage.getItem('token');
     if (!token) throw new Error('Aucun token');
     const response = await axios.get(API_URL + 'me', {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { 
+        Authorization: `Bearer ${token}`,
+         'Content-Type': 'multipart/form-data',
+       },
     });
     return response.data;
   } catch (error) {
@@ -59,38 +62,45 @@ export const getAllUsers = createAsyncThunk('auth/getAllUsers', async (_, thunkA
 });
 
 
-
 export const updateProfile = createAsyncThunk(
   'auth/updateProfile',
-  async (userData, thunkAPI) => {
+    async (userData, thunkAPI) => {
+   
+      
     try {
       const token = sessionStorage.getItem('token');
       const user = JSON.parse(sessionStorage.getItem('user') || '{}');
 
-      if (!token) throw new Error('Aucun token');
-      if (!user?.id) throw new Error('Utilisateur non trouvé en session');
+      if (!token) {
+        throw new Error('Aucun token');
+      }
+      if (!user?.id) {
+        throw new Error('Utilisateur non trouvé en session');
+      }
 
+      // Important : changer axios.put en axios.post pour que le _method: 'PATCH' fonctionne
       const response = await axios.put(
-        `${API_URL}users/${user.id}`,   
+        `${API_URL}users/${user.id}`, 
         userData,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            // Le Content-Type n'est pas nécessaire pour FormData, le navigateur s'en charge.
+          },
         }
       );
 
-      // Sauvegarde du profil modifié en session
-      // sessionStorage.setItem('user', JSON.stringify(response.data));
+      // Met à jour les données de l'utilisateur en session avec la nouvelle réponse
+      sessionStorage.setItem('user', JSON.stringify(response.data));
 
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || 'Impossible de mettre à jour le profil'
+        error.response?.data?.message || 'Impossible de mettre à jour le profil'
       );
     }
   }
 );
-
-
 
 // --- Initial State ---
 const storedToken = sessionStorage.getItem('token');
@@ -162,7 +172,12 @@ const authSlice = createSlice({
 
       // Get Profile
       .addCase(getProfile.fulfilled, (state, action) => {
-        state.user = action.payload;
+        // CORRECTION: Assurez-vous que la structure de l'utilisateur est la même
+        // que celle de l'action 'login'.
+        // Si la réponse de l'API est { user: { ... } }, utilisez action.payload.user.
+        // Si elle est directement { ... }, utilisez action.payload.
+        // Puisque votre action login utilise 'action.payload.user', nous faisons de même ici.
+        state.user = action.payload.user; // <--- Ligne corrigée
       })
       .addCase(getProfile.rejected, (state, action) => {
         state.user = null;
