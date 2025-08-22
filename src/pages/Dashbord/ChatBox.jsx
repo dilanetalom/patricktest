@@ -12,6 +12,7 @@ const ChatBox = ({ projectId }) => {
   const dispatch = useDispatch();
   const { messages, status } = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.auth);
+  // Assurer que l'ID de l'utilisateur est bien récupéré
   const currentUserId = user?.user?.id || user?.id;
 
   const [newMessage, setNewMessage] = useState('');
@@ -19,6 +20,7 @@ const ChatBox = ({ projectId }) => {
 
   // Charger les messages existants
   useEffect(() => {
+    console.log("Composant ChatBox monté. Chargement des messages pour le projet:", projectId);
     if (projectId) {
       dispatch(fetchMessages(projectId));
     }
@@ -32,7 +34,7 @@ const ChatBox = ({ projectId }) => {
         broadcaster: 'pusher',
         key: import.meta.env.VITE_PUSHER_APP_KEY,
         cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
-        forceTLS: false, // true si HTTPS
+        forceTLS: true,
         authEndpoint: `${API_URL}broadcasting/auth`,
         auth: {
           headers: {
@@ -58,6 +60,7 @@ const ChatBox = ({ projectId }) => {
     });
 
     return () => {
+      console.log('Composant ChatBox démonté. Quitte le canal chat.' + projectId);
       window.Echo.leave(`chat.${projectId}`);
     };
   }, [projectId, dispatch]);
@@ -114,6 +117,9 @@ const ChatBox = ({ projectId }) => {
           messages.map((message, idx) => {
             const messageDate = new Date(message.created_at);
             const isSender = message.user_id === currentUserId;
+            
+            // Ligne de débogage :
+            console.log('ID Expéditeur:', message.user_id, '| ID Actuel:', currentUserId, '| Est Expéditeur:', isSender);
 
             // Afficher la date si nouveau jour
             const showDate =

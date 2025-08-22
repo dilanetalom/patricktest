@@ -54,7 +54,7 @@ const Sidebar = ({ setActiveView, activeView }) => {
 
   return (
     <aside className="w-[19%] h-[100vh]  fixed bg-gray-900 text-gray-200 flex flex-col p-6 shadow-2xl">
-      <Link to={user?.user?.role === 'client'?"/bords":"/bord"} className="text-3xl font-extrabold text-white mb-10 tracking-wide">
+      <Link to={user?.role === 'client'?"/bords":"/bord"} className="text-3xl font-extrabold text-white mb-10 tracking-wide">
         Tableau de bord
       </Link>
       <nav className="flex-grow">
