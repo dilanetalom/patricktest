@@ -22,7 +22,7 @@ const ContractSignaturePage = () => {
 
   const sigPad = useRef();
 
-  const isClient = user?.user?.role === 'client';
+  const isClient = user?.role === 'client';
 
   useEffect(() => {
     if (projectId) {

@@ -36,8 +36,8 @@ const AcceptedProjects = () => {
   };
 
   const canSign = (project) => {
-    if (user?.user?.role === 'client' && !project.client_signature) return true;
-    if (user?.user?.role === 'admin' && project.client_signature && !project.admin_signature) return true;
+    if (user?.role === 'client' && !project.client_signature) return true;
+    if (user?.role === 'admin' && project.client_signature && !project.admin_signature) return true;
     return false;
   };
 
@@ -86,7 +86,7 @@ const AcceptedProjects = () => {
 
                 {/* Bouton */}
                 <div className="px-6 py-4 bg-gray-50">
-                  {   (user?.user?.role === 'client' && !project.client_signature) ? (
+                  {   (user?.role === 'client' && !project.client_signature) ? (
                     <Link
                       to={`/signe/${project.id}`}
                       className="block text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-colors duration-200 shadow-sm"
