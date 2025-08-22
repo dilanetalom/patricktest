@@ -54,6 +54,8 @@ const ProgressPage = () => {
                         {inProgressProjects.map(project => {
                                                         const totalProgress = (project.updates || []).reduce((sum, update) => sum + (update.progress_percentage || 0), 0);
 
+                                                        const formattedProgress = totalProgress.toString() + '%';
+                                                        const limitedProgress = Math.min(totalProgress, 100);
                             return(
                             <div
                                 key={project.id}
@@ -69,12 +71,12 @@ const ProgressPage = () => {
                                 </p>
                                 <p className="text-gray-600 mb-1">
                                     <span className="font-medium">Progression :</span>
-                                    <span className="text-lg font-bold text-blue-600 ml-2">{totalProgress || 0}%</span>
+                                    <span className="text-lg font-bold text-blue-600 ml-2">{formattedProgress || 0}%</span>
                                 </p>
                                 <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
                                     <div
                                         className="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out"
-                                        style={{ width: `${totalProgress || 0}%` }}
+                                        style={{ width: `${limitedProgress || 0}%` }}
                                     ></div>
                                 </div>
                                 <p className="text-gray-500 text-sm mt-4 italic">
