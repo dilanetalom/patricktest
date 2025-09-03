@@ -12,7 +12,7 @@ function ContactDetails() {
       icon: <HiMapPin size={54} />,
       content: [
         {
-          value: "Cameroun, France  et Turquie ",
+          value: "Cameroun, Douale ",
           mail: false,
         },
       ],
@@ -23,7 +23,7 @@ function ContactDetails() {
       icon: <BiSolidPhoneCall size={54} />,
       content: [
         {
-          value: "+33 6 38 05 54 46",
+          value: "+237 690 841 749",
           mail: false,
         },
    
@@ -35,7 +35,7 @@ function ContactDetails() {
       icon: <BiSolidEnvelope size={54} />,
       content: [
         {
-          value: "info@mpedigitalsolutions.com",
+          value: "dilanetalom8@gmail.com",
           mail: true,
         },
       ],
