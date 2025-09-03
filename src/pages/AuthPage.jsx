@@ -47,12 +47,18 @@ const LoginPage = () => {
     <div className="flex h-screen bg-white">
       <div className="hidden lg:flex w-1/2 bg-blue-950 text-white flex-col justify-center items-center p-8 relative">
         <div className=" top-8 left-8 text-2xl font-bold">
-          <div className={`w-full h-full bg-gray-50 rounded-full`}>
-            <img
+          <div className={`w-56 h-56 bg-gray-50 rounded-full flex items-center justify-center`}>
+            {/* <img
               src={logo}
               alt=""
               className="h-[500px] w-full object-cover object-center"
-            />
+            /> */}
+               <span className="text-2xl font-extrabold tracking-wider  flex items-center">
+          <span className="px-3 py-1 bg-blue-950 text-[#F6F6F6] rounded-md shadow-md">T</span>
+          <span className="ml-1 px-3 py-1 border-2 border-blue-950 text-blue-950 rounded-md">D</span>
+        </span>
+
+            
           </div>
         </div>
         <div className="text-center mt-6 flex items-center gap-3">

@@ -62,13 +62,15 @@ function LayoutDashbord({ children }) {
       </div>
       <div className="w-[81%]  flex flex-col">
         <NavDash />
-        <main className='flex-1 p-8 overflow-y-auto'>
+        <main className='flex-1 relative px-8 overflow-y-auto'>
           {user?.role === 'client' && (
-            <div className='w-full '>
+            <div className='w-full fixed  '>
               <ProgressBar currentStep={currentStep} />
             </div>
           )}
-          {children}
+         <div className={`pb-8 ${user?.role === 'client'? " pt-36":"pt-8"}`}>
+           {children}
+         </div>
         </main>
 
       </div>

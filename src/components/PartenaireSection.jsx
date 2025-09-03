@@ -58,16 +58,20 @@ const PartnersSection = () => {
                 <p className="text-lg text-blue-950 mb-12 max-w-2xl mx-auto">
                     Nous sommes fiers de collaborer avec des entreprises de renom pour offrir les meilleures solutions digitales à nos clients.
                 </p>
-                
+
                 <div className="mx-auto max-w-6xl">
                     <Slider {...settings}>
                         {partners.map((partner, index) => (
                             <div key={index} className="p-4">
-                                <img
+                                <span className="text-2xl font-extrabold tracking-wider  flex items-center">
+                                    <span className="px-3 py-1 bg-blue-950 text-[#F6F6F6] rounded-md shadow-md">T</span>
+                                    <span className="ml-1 px-3 py-1 border-2 border-blue-950 text-blue-950 rounded-md">D</span>
+                                </span>
+                                {/* <img
                                     src={partner.logo}
                                     alt={partner.name}
                                     className="w-full h-auto max-h-24 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300 mx-auto"
-                                />
+                                /> */}
                             </div>
                         ))}
                     </Slider>

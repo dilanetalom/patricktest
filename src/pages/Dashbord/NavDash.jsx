@@ -1,12 +1,28 @@
 // src/components/Navbar.jsx
 import React, { useEffect, useState } from 'react';
-import { BellIcon, UserCircleIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'; // Ajout de ChatBubbleLeftRightIcon
+import { BellIcon, UserCircleIcon, ChatBubbleLeftRightIcon, LanguageIcon } from '@heroicons/react/24/outline';// Ajout de ChatBubbleLeftRightIcon
 import ProfileDropdown from './ProfileDropdown';
 import { useNavigate } from 'react-router-dom'; // Import de useNavigate pour la redirection
 
 const NavDash = () => {
   const [user, setUser] = useState({});
   const navigate = useNavigate();
+
+
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  // Liste des langues avec leurs codes
+  const languages = [
+    { code: 'en', label: 'Anglais' },
+    { code: 'es', label: 'Espagnol' },
+    { code: 'ar', label: 'Arabe' },
+    { code: 'de', label: 'Allemand' },
+    { code: 'zh', label: 'Chinois' },
+  ];
 
   // Premier useEffect pour charger les données du localStorage
   useEffect(() => {
@@ -36,6 +52,39 @@ const NavDash = () => {
       </div>
       
       <div className="flex items-center space-x-6">
+
+      
+        {/* Bouton de traduction avec dropdown */}
+        <div className="relative">
+          <button
+            onClick={toggleDropdown}
+            className="flex items-center space-x-2 relative text-gray-500 hover:text-gray-900 transition-colors duration-200"
+          >
+            <LanguageIcon className="h-7 w-7" />
+            <span>Traduire</span>
+          </button>
+
+          {/* Le dropdown, visible conditionnellement */}
+          {isDropdownOpen && (
+            <div className="absolute top-full right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+              {languages.map((lang) => (
+                <button
+                  key={lang.code}
+                  // TODO: Ajouter la logique de traduction ici
+                  onClick={() => {
+                    console.log(`Changement de langue vers : ${lang.code}`);
+                    // Ex: i18n.changeLanguage(lang.code);
+                    toggleDropdown(); // Ferme le dropdown après le clic
+                  }}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  {lang.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Bouton de messagerie */}
         <button
           onClick={handleChatClick}

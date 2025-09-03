@@ -81,8 +81,11 @@ function NavbarHeader({ activeSection, setActiveSection }) {
   return (
     <header className="flex justify-between items-center h-[12vh] w-full text-gray-400 px-4 lg:px-[180px] fixed z-50 bg-white shadow-md">
       {/* Logo */}
-      <span className="font-charismatic text-white w-[100px] h-full relative">
-        <img src={logo} alt="Logo" className='w-full h-full object-contain' />
+      <span className="font-charismatic text-white w-[100px] h-full relative  flex items-center">
+        <span className="text-2xl font-extrabold tracking-wider  flex items-center">
+          <span className="px-3 py-1 bg-blue-950 text-[#F6F6F6] rounded-md shadow-md">T</span>
+          <span className="ml-1 px-3 py-1 border-2 border-blue-950 text-blue-950 rounded-md">D</span>
+        </span>
       </span>
 
       {/* Liens de navigation pour bureau */}

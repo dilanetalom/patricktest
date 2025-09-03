@@ -17,57 +17,63 @@ const RegisterPage = () => {
         city: '',
         neighborhood: '',
         phone: '',
-      });
-    
-      const dispatch = useDispatch();
-      const navigate = useNavigate();
-       const [view, setView ] = useState(false)
-    
-       const { user, isLoading, isSuccess, isError, message } = useSelector((state) => state.auth);
+    });
 
-  // Effet pour gérer notifications et redirection
-  useEffect(() => {
-    if (isError) {
-      toast.error(message);
-      dispatch(reset());
-    }
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [view, setView] = useState(false)
 
-    if (isSuccess && user) {
-      toast.success('Connexion réussie ! Redirection...');
-      const timer = setTimeout(() => {
-        console.log(user);
-        
-        if (user.role === 'client') {
-          navigate('/bords');
-        } else {
-          navigate('/bord');
+    const { user, isLoading, isSuccess, isError, message } = useSelector((state) => state.auth);
+
+    // Effet pour gérer notifications et redirection
+    useEffect(() => {
+        if (isError) {
+            toast.error(message);
+            dispatch(reset());
         }
-      }, 1000);
 
-      return () => clearTimeout(timer);
-    }
-  }, [isError, isSuccess, message, user, navigate, dispatch]);
-    
-      const handleChange = (e) => {
+        if (isSuccess && user) {
+            toast.success('Connexion réussie ! Redirection...');
+            const timer = setTimeout(() => {
+                console.log(user);
+
+                if (user.role === 'client') {
+                    navigate('/bords');
+                } else {
+                    navigate('/bord');
+                }
+            }, 1000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [isError, isSuccess, message, user, navigate, dispatch]);
+
+    const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-      };
-    
-      const handleSubmit = (e) => {
+    };
+
+    const handleSubmit = (e) => {
         e.preventDefault();
         dispatch(register(formData));
-      };
+    };
     return (
         <div className="flex h-screen bg-white">
             {/* Section de gauche (Connexion) */}
             <div className="hidden lg:flex w-1/2 bg-blue-950 text-white flex-col gap-4 justify-center items-center  p-8 relative">
                 {/* L'image de fond pourrait être ajoutée ici si tu le souhaites */}
                 <div className=" top-8 left-8 text-2xl font-bold">
-                    <div className={`w-full h-full bg-gray-50 rounded-full`}>
-                        <img
-                            src={logo}
-                            alt=""
-                            className="h-[500px] w-full object-cover object-center"
-                        />
+                    <div className={`w-56 h-56 bg-gray-50 rounded-full flex items-center justify-center`}>
+                        {/* <img
+              src={logo}
+              alt=""
+              className="h-[500px] w-full object-cover object-center"
+            /> */}
+                        <span className="text-2xl font-extrabold tracking-wider  flex items-center">
+                            <span className="px-3 py-1 bg-blue-950 text-[#F6F6F6] rounded-md shadow-md">T</span>
+                            <span className="ml-1 px-3 py-1 border-2 border-blue-950 text-blue-950 rounded-md">D</span>
+                        </span>
+
+
                     </div>
                 </div>
                 <div className="text-center flex items-center justify-center gap-3 ">
@@ -83,7 +89,7 @@ const RegisterPage = () => {
 
             {/* Section de droite (Inscription) */}
             <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 lg:p-10">
-            <div className="absolute top-10 left-10 bg-blue-300 rounded-full w-8 h-8 animate-pulse opacity-50"></div>
+                <div className="absolute top-10 left-10 bg-blue-300 rounded-full w-8 h-8 animate-pulse opacity-50"></div>
                 <div className="absolute top-20 right-20 bg-indigo-300 rounded-full w-12 h-12 animate-bounce opacity-50"></div>
                 <div className="absolute bottom-10 left-20 bg-teal-300 rounded-full w-6 h-6 animate-spin-slow opacity-50"></div>
                 <div className="absolute bottom-20 right-10 bg-purple-300 rounded-full w-10 h-10 animate-ping opacity-50"></div>
@@ -198,7 +204,7 @@ const RegisterPage = () => {
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700">Mot de passe <span className='text-red-600'>*</span></label>
                             <div className="mt-1 relative">
                                 <input
-                                   type={view?"text":"password"}
+                                    type={view ? "text" : "password"}
                                     id="password"
                                     name="password"
                                     value={formData.password}
@@ -207,7 +213,7 @@ const RegisterPage = () => {
                                     className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm pr-10 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                     placeholder="Mot de passe"
                                 />
-                                <div onClick={()=>setView(!view)}  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
+                                <div onClick={() => setView(!view)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
@@ -236,22 +242,22 @@ const RegisterPage = () => {
 
                         <div>
 
-                       
+
                             <button
                                 type="submit"
                                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-950 hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             >
-                              {isLoading ? (
-                                <div className="flex items-center space-x-2">
-                                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    <span>Inscription en cours...</span>
-                                </div>
-                            ) : (
-                                'S\'INSCRIRE'
-                            )}
+                                {isLoading ? (
+                                    <div className="flex items-center space-x-2">
+                                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <span>Inscription en cours...</span>
+                                    </div>
+                                ) : (
+                                    'S\'INSCRIRE'
+                                )}
                             </button>
                         </div>
 

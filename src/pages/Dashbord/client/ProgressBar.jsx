@@ -13,7 +13,7 @@ const ProgressBar = ({ currentStep }) => {
     ];
 
     return (
-       <div className="flex justify-between items-start w-full px-4 mb-8 relative">
+       <div className=" w-full bg-gray-100 py-6 flex justify-between items-start w-full px-4 mb-8 relative z-50">
             {steps.map((step, index) => {
                 const isCurrentStep = index + 1 === currentStep;
                 const isCompletedStep = index + 1 < currentStep;
